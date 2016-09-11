@@ -40,11 +40,23 @@ var Model = class_def
 			{
 				var view = this.Views[ i ];
 				var method = view && view[ 0 ][ view[ 1 ] + message ];
-				if( method )  method.apply( view[ 0 ], args );
+				if( method )  method.apply( view[ 0 ], args || [] );
 			}
 		};
 	}
 );
+
+
+var RUId = new function()
+{
+	var next = 1;
+	
+	this.Next = function( obj )
+	{
+		return obj.RUId = next ++;
+	};
+};
+
 
 function str_right( ct, str )
 {

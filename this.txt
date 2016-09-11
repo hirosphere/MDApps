@@ -1,5 +1,5 @@
 ﻿https://github.com/hirosphere/MDApps.git
-https://hirosphere.github.io/MDApps/MDAppA/HTML_Demo.html
+https://hirosphere.github.io/MDApps/MDAppB/MDAppB.html
 
 App 1	現状作業の延長・補助
 	

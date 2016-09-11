@@ -1,9 +1,80 @@
 ﻿
 html { margin: 0; padding: 0; }
-body { margin: 0; padding: 1; }
+body { margin: 0; padding: 1px; }
 
 html, input, textarea, button
 {
 	font-family: "メイリオ";
 	color: #282725;
 }
+
+.Navi
+{
+	cursor: default;
+	border-bottom: solid 14px #f2f0e4;
+	padding-bottom: 2px;
+	line-height: 36px;
+	font-size: 18px;
+}
+
+.Navi .Tab
+{
+	padding: 5px 15px;
+	font-weight: bold;
+}
+
+.Navi .Tab:hover
+{
+	background: #eef6fe;
+}
+
+.NaviPath .Tab
+{
+	
+}
+
+.NaviPath .Tab_sel,
+.NaviPath .Tab_sel:hover
+{
+	background: #7c4;
+	color: #fff;
+}
+
+.NaviPath .Tab_sep
+{
+	padding: 0 2px;
+}
+
+.NaviFields
+{
+	margin-left: 2ex;
+}
+
+.NaviFields .Tab
+{
+	padding-right: 5px;
+}
+
+.NaviFields .Tab_sel,
+.NaviFields .Tab_sel:hover
+{
+	background: #7ad;
+	color: #fff;
+}
+
+.NaviFields .Tab_ent
+{
+	margin-left: 3px;
+	padding: 1px 6px;
+	color: #eec;
+}
+
+.NaviFields .Tab_ent:hover
+{
+	background: #fff;
+	color: #775;
+}
+
+
+
+
