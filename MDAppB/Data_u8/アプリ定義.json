@@ -1,0 +1,6 @@
+﻿{
+	"受入れ記録ファイル": function( date )
+	{
+		return date_format( "{YYYY}\\{YYYY}-{MM}.json", date );
+	}
+}
