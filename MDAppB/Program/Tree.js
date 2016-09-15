@@ -64,6 +64,11 @@ var Node = class_def
 			}
 		};
 		
+		this.Caption = function( failv )
+		{
+			return this.GetAttr( "Title", this.GetAttr( "Name", failv ) );
+		};
+		
 		this.GetAttr = function( name, failv )
 		{
 			return this.Src && this.Src[ name ] !== undefined ? this.Src[ name ] : failv;
@@ -73,6 +78,11 @@ var Node = class_def
 		{
 			return this.Names[ name ];
 		};
+		
+		this.First = function()
+		{
+			return this.Com && this.Com.Fields[ 0 ] || this;
+		}
 		
 		this.Next = function()
 		{
@@ -93,9 +103,11 @@ var Node = class_def
 				path.push( node );
 			}
 			
-			for( var n = 0, node; ( node = path.pop() ) != null || n < loop_ct; n ++ )
+			loop_ct = Math.max( loop_ct, path.length );
+			
+			for( var n = 0; n < loop_ct; n ++ )
 			{
-				callback( n, node );
+				callback( n, path.pop() );
 			}
 		};
 		

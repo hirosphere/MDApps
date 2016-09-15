@@ -19,9 +19,8 @@ UI.App = class_def
 			
 			new Labo.Tree( this.e );
 			
-			navi.SelectPath( page_tree.Node_Path( "MDApp/資材/受入れ" ) );
-			
-			// navi.SelectPath( "MDApp/資材/受入れ" );
+			navi.Select( page_tree.Node_Path( "MDApp" ) );
+			navi.Select( page_tree.Node_Path( "MDApp/副資材" ) );
 		};
 		
 		this.Terminate = function()
@@ -35,38 +34,20 @@ UI.NaviModel = class_def
 	Model,
 	function( Base )
 	{
-		this.Initiate = function( tree )
+		this.Initiate = function()
 		{
 			Base.Initiate.call( this );
-			
-			this.Tree = tree;
-			this.CurPath = null;
-			this.CurField = null;
-			this.Current = null;
+			this.Current = undefined;
 		};
 		
-		this.PathSelected = function( node )
-		{
-			return this.CurField == null && node == this.CurPath;
-		};
-		
-		this.SelectPath = function( node )
-		{
-			if( node == this.Current && node == this.CurPath ) return;
-			
-			this.Current = node;
-			this.CurPath = node;
-			this.CurField = null;
-			this.Notify( "PathSelect" );
-		};
-		
-		this.SelectField = function( node )
+		this.Select = function( node )
 		{
 			if( node == this.Current ) return;
 			
+			var old = this.Current;
 			this.Current = node;
-			this.CurField = node;
-			this.Notify( "FieldSelect" );
+			var path_changed = ( node && node.Com ) !== ( old && old.Com );
+			this.Notify( "Changed", [ this.Current, old, path_changed ] );
 		};
 	}
 );
@@ -79,15 +60,18 @@ UI.Navi = class_def
 	{
 		this.Initiate = function( com, navi )
 		{
+			this.Current = null;
+			
 			this.e = enew_c( "div", com, "Navi" );
-			new UI.Path( this.e, navi );
-			new UI.Fields( this.e, navi );
+			new UI.Navi.Path( this.e, navi );
+			// new UI.Navi.Exit( this.e, navi );
+			new UI.Navi.Coll( this.e, navi );
 		};
 	}
 );
 
 
-UI.Path = class_def
+UI.Navi.Path = class_def
 (
 	null,
 	function()
@@ -96,25 +80,21 @@ UI.Path = class_def
 		{
 			this.Navi = navi;
 			this.Tabs = [];
-			navi.AddView( this, "Navi_" );
 			
-			this.e = enew_c( "span", com, "NaviPath" );
+			this.e = enew_c( "div", com, "Navi_Path" );
+			
+			navi.AddView( this, "Navi_" );
 		};
 		
-		
-		this.Navi_PathSelect =
-		this.Navi_FieldSelect =
-		
-		this.Update = function()
+		this.Navi_Changed = function( node, old_node, path_changed )
 		{
 			var self = this;
-			var node = this.Navi.CurPath;
 			
 			node && node.PathScan
 			(
-				function( n, node )
+				function( n, iter )
 				{
-					self.MakeTab( n, node );
+					self.MakeTab( n, iter == node ? null : iter );
 				},
 				this.Tabs.length
 			);
@@ -130,12 +110,12 @@ UI.Path = class_def
 		{
 			var node = null;
 			
-			var e = enew_c( "span", com, "Tab" );
-			var s = enew_ct( "span", com, "Tab_sep", ">", null, { display: "none" } );
+			var e = enew_c( "span", com, "Navi_Path_Tab" );
+			var s = enew_ct( "span", com, "Navi_Path_Tab_Sep", ">" );
 			
 			e.onmousedown = function()
 			{
-				node && navi.SelectPath( node );
+				node && navi.Select( node );
 			};
 			
 			this.Update = function( new_node )
@@ -143,9 +123,9 @@ UI.Path = class_def
 				node = new_node;
 				
 				e_plain( e, node == null ? ".." : node.GetAttr( "Name", "" ) );
-				e_class_set( e, "Tab_sel", navi.PathSelected( node ) );
-				e.style.display = node ? "inline" : "none";
-				s.style.display = ( node && node.HasFields() ) ? "inline" : "none";
+				e_class_set( e, "Navi_Path_Tab_Sel",  node == navi.Current );
+				e_class_set( e, "Navi_Path_Tab_Vis",  node != null );
+				s.style.display = ( node != null && node != navi.Current ) ? "inline" : "none";
 			};
 		}
 		
@@ -153,7 +133,43 @@ UI.Path = class_def
 );
 
 
-UI.Fields = class_def
+UI.Navi.Exit = class_def
+(
+	null,
+	function()
+	{
+		this.Initiate = function( com, navi )
+		{
+			this.Navi = navi;
+			this.Current = null;
+			
+			var self = this;
+			this.e = enew_c( "span", com, "Navi_Exit" );
+			this.sep = enew_ct( "span", com, "Navi_Exit_Sep", ">" );
+			
+			this.e.onmousedown = function()
+			{
+				self.Current && navi.Select( self.Current );
+			};
+			
+			navi.AddView( this, "Navi_" );
+		};
+		
+		this.Navi_Changed = function( node, old, path_changed )
+		{
+			if( path_changed )
+			{
+				var com =  this.Current =　node && node.Com || null;
+				e_plain( this.e, com ? com.Caption() : "" );
+				this.e.style.display =
+				this.sep.style.display = ( com ? "inline" : "none" );
+			}
+		};
+	}
+);
+
+
+UI.Navi.Coll = class_def
 (
 	null,
 	function()
@@ -164,33 +180,25 @@ UI.Fields = class_def
 			this.Tabs = [];
 			navi.AddView( this, "Navi_" );
 			
-			this.e = enew_c( "span", com, "NaviFields" );
-			enew_ct( "span", this.e, "", "[" );
-			this.c = enew_c( "span", this.e, "" );
-			enew_ct( "span", this.e, "", "]" );
+			this.e = enew_c( "div", com, "Navi_Coll" );
 		};
 		
-		
-		this.Navi_FieldSelect = function()
+		this.Navi_Changed = function( node, old_node, path_changed )
 		{
-			this.Update();
-		};
-		
-		this.Navi_PathSelect =
-		this.Update = function()
-		{
-			var node = this.Navi.CurPath;
-			var ct = Math.max( this.Tabs.length, node ? node.Fields.length : 0 );
+			var n = 0;
+			var iter = node && node.First() || null;
 			
-			for( var n = 0; n < ct; n ++ )
+			while( n < this.Tabs.length || iter )
 			{
-				this.MakeTab( n, node ? node.Fields[ n ] : null );
+				this.MakeTab( n, iter );
+				n ++;
+				iter = iter && iter.Next();
 			}
 		};
 		
 		this.MakeTab = function( n, node )
 		{
-			var tab = this.Tabs[ n ] = this.Tabs[ n ] || new Tab( this.c, this.Navi );
+			var tab = this.Tabs[ n ] = this.Tabs[ n ] || new Tab( this.e, this.Navi );
 			tab.Update( node );
 		};
 		
@@ -198,33 +206,55 @@ UI.Fields = class_def
 		{
 			var node = null;
 			
-			var e = enew_c( "span", com, "Tab" );
-			var cap = enew_c( "span", e, "Tab_cap" );
-			var ent = enew_ct( "span", e, "Tab_ent", ">" );
-			var s = enew_ct( "span", com, "Tab_sep", "|", null, { display: "none" } );
+			var e = enew_c( "span", com, "Navi_Coll_Tab" );
+			var s = enew_ct( "span", com, "Navi_Coll_Tab_sep", "|", null, { display: "none" } );
 			
 			e.onmousedown = function()
 			{
-				node && navi.SelectField( node );
-			};
-			
-			ent.onclick = function()
-			{
-				node && navi.SelectPath( node );
+				node && navi.Select( node );
 			};
 			
 			this.Update = function( new_node )
 			{
 				node = new_node;
 				
-				e_plain( cap, node == null ? ".." : node.GetAttr( "Name", "" ) );
-				e_class_set( e, "Tab_sel", node == navi.CurField );
+				e_plain( e, node == null ? ".." : node.Caption( "Name", "" ) );
+				e_class_set( e, "Navi_Coll_Tab_Sel", node == navi.Current );
 				e.style.display = node ? "inline" : "none";
-				ent.style.display = node ? "inline" : "none";
-				s.style.display = ( node && node.Next() ) ? "inline" : "none";
+				//s.style.display = ( node && node.Next() ) ? "inline" : "none";
 			};
 		}
 		
+	}
+);
+
+
+UI.Navi.Enter = class_def
+(
+	null,
+	function()
+	{
+		this.Initiate = function( com, node, navi )
+		{
+			this.e = enew_c( "div", com, "Navi_Enter" );
+			this.p = enew_c( "div", this.e, "_Path" );
+			this.fs = enew_c( "div", this.e, "_Fields" );
+			
+			if( node )  for( var n in node.Fields )
+			{
+				new Tab( this.fs, "Navi_Ent_Item", node.Fields[ n ], navi );
+			}
+		};
+		
+		function Tab( com, css_class, node, navi )
+		{
+			var e = enew_ct( "div", com, css_class, node.Caption( "----" ) );
+			
+			e.onmousedown = function()
+			{
+				node && navi.Select( node );
+			};
+		}
 	}
 );
 
@@ -246,8 +276,7 @@ UI.Contents = class_def
 			navi.AddView( this, "Navi_" );
 		};
 		
-		this.Navi_PathSelect =
-		this.Navi_FieldSelect = function()
+		this.Navi_Changed = function()
 		{
 			var con = this.CurrentContent;
 			con && con.Hide();
@@ -272,7 +301,7 @@ UI.Contents = class_def
 		
 		this.CreateContent = function( com, node )
 		{
-			return new UI.Content( com, node, this.MD );
+			return new UI.Content( com, node, this.Navi, this.MD );
 		}
 	}
 );
@@ -283,10 +312,19 @@ UI.Content = class_def
 	null,
 	function()
 	{
-		this.Initiate = function( com, node, md )
+		this.Initiate = function( com, node, navi, md )
 		{
 			this.e = enew_c( "div", com, "Content" );
-			enew_t( "span", this.e, node, {}, { fontSize: "200px", color: "#dda", fontFamily: "メイリオ" } );
+			enew_t
+			(
+				"div", null, node, {},
+				{
+					fontSize: "200px", color: "#dda", fontFamily: "メイリオ",
+					position: "absolute", display: "block"
+				}
+			);
+			
+			new UI.Navi.Enter( this.e, node, navi );
 		};
 		
 		this.Show = function()

@@ -8,73 +8,68 @@ html, input, textarea, button
 	color: #282725;
 }
 
+
 .Navi
 {
 	cursor: default;
-	border-bottom: solid 14px #f2f0e4;
-	padding-bottom: 2px;
-	line-height: 36px;
-	font-size: 18px;
 }
 
-.Navi .Tab
+.Navi_Exit
 {
-	padding: 5px 15px;
+	margin-right: 1ex;
+	padding: 0 8px;
 	font-weight: bold;
 }
 
-.Navi .Tab:hover
+.Navi_Path
 {
-	background: #eef6fe;
-}
-
-.NaviPath .Tab
-{
-	
-}
-
-.NaviPath .Tab_sel,
-.NaviPath .Tab_sel:hover
-{
-	background: #7c4;
+	margin-bottom: 1px;
+	background: #7b3;
+	height: 17px;
+	line-height: 17px;
+	font-size: 15px;
 	color: #fff;
 }
 
-.NaviPath .Tab_sep
+.Navi_Path_Tab     { display: none;  padding: 0px 8px; }
+.Navi_Path_Tab:hover  { font-weight: bold; }
+.Navi_Path_Tab_Vis { display: inline }
+.Navi_Path_Tab_Sel,
+.Navi_Path_Tab_Sel:hover { color: #fe6; }
+.Navi_Path_Tab_Sep { margin: 0 0px; font-family: monospace; }
+
+
+.Navi_Coll
 {
-	padding: 0 2px;
+	border-bottom: dotted 1px #997;
+	padding-bottom: 1px;
+	line-height: 36px;
+	font-size: 16px;
 }
 
-.NaviFields
+.Navi_Coll_Tab { margin-right: 1px; padding: 6px 16px; color: #887; }
+.Navi_Coll_Tab:hover { background: #f2f0e4; }
+.Navi_Coll_Tab_Sel,
+.Navi_Coll_Tab_Sel:hover { background: #69d; background: #bb9; color: #fff; }
+
+
+.Navi_Enter
 {
-	margin-left: 2ex;
+	cursor: default;
+	width: 17em;
+	padding: 3em 5em;
+	line-height: 36px;
+	font-size: 22px;
 }
 
-.NaviFields .Tab
+.Navi_Ent_Item
 {
-	padding-right: 5px;
+	border-bottom: 1px dotted #997;
+	margin-bottom: 1px;
+	padding: 0 1ex;
 }
 
-.NaviFields .Tab_sel,
-.NaviFields .Tab_sel:hover
-{
-	background: #7ad;
-	color: #fff;
-}
-
-.NaviFields .Tab_ent
-{
-	margin-left: 3px;
-	padding: 1px 6px;
-	color: #eec;
-}
-
-.NaviFields .Tab_ent:hover
-{
-	background: #fff;
-	color: #775;
-}
-
+.Navi_Ent_Item:hover  { background: #f2f0e4; }
 
 
 
