@@ -6,21 +6,25 @@ UI.App = class_def
 	null,
 	function()
 	{
-		this.Initiate = function( com )
+		this.Initiate = function( com, data_dir, demo_mode )
 		{
+			var md = new MD.App( data_dir, demo_mode );
+			
 			this.e = enew( "div", com );
 			
 			var page_tree = new Tree();
-			page_tree.SetSource( MD.ページ構成 );
+			
+			page_tree.Types,Memo = Labo.MemoNode;
+			
+			page_tree.SetSource( md.ページ構成 );
 			
 			var navi = new UI.NaviModel( page_tree );
 			new UI.Navi( this.e, navi );
 			new UI.Contents( this.e, navi, MD );
 			
-			new Labo.Tree( this.e );
-			
-			navi.Select( page_tree.Node_Path( "MDApp" ) );
-			navi.Select( page_tree.Node_Path( "MDApp/副資材" ) );
+			//navi.Select( page_tree.Node_Path( "MDApp" ) );
+			navi.Select( page_tree.Node_Path( "MDApp/定義/資材" ) );
+			navi.Select( page_tree.Node_Path( "MDApp/Labo/Memo" ) );
 		};
 		
 		this.Terminate = function()
@@ -64,7 +68,6 @@ UI.Navi = class_def
 			
 			this.e = enew_c( "div", com, "Navi" );
 			new UI.Navi.Path( this.e, navi );
-			// new UI.Navi.Exit( this.e, navi );
 			new UI.Navi.Coll( this.e, navi );
 		};
 	}
@@ -122,49 +125,13 @@ UI.Navi.Path = class_def
 			{
 				node = new_node;
 				
-				e_plain( e, node == null ? ".." : node.GetAttr( "Name", "" ) );
+				e_plain( e, node == null ? ".." : node.GetAttr( "Name", "----" ) );
 				e_class_set( e, "Navi_Path_Tab_Sel",  node == navi.Current );
 				e_class_set( e, "Navi_Path_Tab_Vis",  node != null );
 				s.style.display = ( node != null && node != navi.Current ) ? "inline" : "none";
 			};
 		}
 		
-	}
-);
-
-
-UI.Navi.Exit = class_def
-(
-	null,
-	function()
-	{
-		this.Initiate = function( com, navi )
-		{
-			this.Navi = navi;
-			this.Current = null;
-			
-			var self = this;
-			this.e = enew_c( "span", com, "Navi_Exit" );
-			this.sep = enew_ct( "span", com, "Navi_Exit_Sep", ">" );
-			
-			this.e.onmousedown = function()
-			{
-				self.Current && navi.Select( self.Current );
-			};
-			
-			navi.AddView( this, "Navi_" );
-		};
-		
-		this.Navi_Changed = function( node, old, path_changed )
-		{
-			if( path_changed )
-			{
-				var com =  this.Current =　node && node.Com || null;
-				e_plain( this.e, com ? com.Caption() : "" );
-				this.e.style.display =
-				this.sep.style.display = ( com ? "inline" : "none" );
-			}
-		};
 	}
 );
 
@@ -218,7 +185,7 @@ UI.Navi.Coll = class_def
 			{
 				node = new_node;
 				
-				e_plain( e, node == null ? ".." : node.Caption( "Name", "" ) );
+				e_plain( e, node == null ? ".." : node.GetAttr( "Name", "----" ) );
 				e_class_set( e, "Navi_Coll_Tab_Sel", node == navi.Current );
 				e.style.display = node ? "inline" : "none";
 				//s.style.display = ( node && node.Next() ) ? "inline" : "none";
@@ -240,7 +207,7 @@ UI.Navi.Enter = class_def
 			this.p = enew_c( "div", this.e, "_Path" );
 			this.fs = enew_c( "div", this.e, "_Fields" );
 			
-			if( node )  for( var n in node.Fields )
+			if( node )  for( var n in node.GetFields() )
 			{
 				new Tab( this.fs, "Navi_Ent_Item", node.Fields[ n ], navi );
 			}
@@ -301,7 +268,10 @@ UI.Contents = class_def
 		
 		this.CreateContent = function( com, node )
 		{
-			return new UI.Content( com, node, this.Navi, this.MD );
+			var typename = node && node.GetAttr( "Type" ) || "";
+			var ctor = UI.Content_Type[ typename ] || UI.Content;
+			var content = new ctor( com, node, this.Navi, this.MD );
+			return content;
 		}
 	}
 );
@@ -312,20 +282,26 @@ UI.Content = class_def
 	null,
 	function()
 	{
+		this.CssClass = "Content";
+		
 		this.Initiate = function( com, node, navi, md )
 		{
-			this.e = enew_c( "div", com, "Content" );
-			enew_t
-			(
-				"div", null, node, {},
-				{
-					fontSize: "200px", color: "#dda", fontFamily: "メイリオ",
-					position: "absolute", display: "block"
-				}
-			);
+			this.Node = node;
+			this.Navi = navi;
+			this.MD = md;
 			
-			new UI.Navi.Enter( this.e, node, navi );
+			this.e = enew_c( "div", com, this.CssClass );
+			
+			this.BuildTitle( this.e, this.Title || node && node.Caption() );
+			this.BuildTop( this.e, node, navi, md );
+			this.BuildMiddle( this.e, node, navi, md );
+			this.BuildBottom( this.e, node, navi, md );
 		};
+		
+		this.BuildTitle = function( e, title ) { enew_t( "h2", e, title ); };
+		this.BuildTop = function( e, node, navi, md ) {};
+		this.BuildMiddle = function( e, node, navi, md ) { new UI.Navi.Enter( e, node, navi ); };
+		this.BuildBottom = function( e, node, navi, md ) {};
 		
 		this.Show = function()
 		{
@@ -335,6 +311,11 @@ UI.Content = class_def
 		this.Hide = function()
 		{
 			this.e.style.display = "none";
+		};
+		
+		this.toString = function()
+		{
+			return "UI.Content " + ( this.Node && this.Node.GetAttr( "Type" ) );
 		};
 	}
 );

@@ -5,7 +5,7 @@ body { margin: 0; padding: 1px; }
 html, input, textarea, button
 {
 	font-family: "メイリオ";
-	color: #282725;
+	color: #333;
 }
 
 
@@ -24,40 +24,40 @@ html, input, textarea, button
 .Navi_Path
 {
 	margin-bottom: 1px;
-	background: #7b3;
+	background: #5a2;
 	height: 17px;
 	line-height: 17px;
 	font-size: 15px;
 	color: #fff;
 }
 
-.Navi_Path_Tab     { display: none;  padding: 0px 8px; }
+.Navi_Path_Tab     { display: none;  padding: 0px 5px; }
 .Navi_Path_Tab:hover  { font-weight: bold; }
 .Navi_Path_Tab_Vis { display: inline }
 .Navi_Path_Tab_Sel,
 .Navi_Path_Tab_Sel:hover { color: #fe6; }
-.Navi_Path_Tab_Sep { margin: 0 0px; font-family: monospace; }
+.Navi_Path_Tab_Sep { margin: 0 0px; font-size: 12px; font-family: monospace; }
 
 
 .Navi_Coll
 {
-	border-bottom: dotted 1px #997;
+	border-bottom: solid 1px #ddb;
 	padding-bottom: 1px;
 	line-height: 36px;
 	font-size: 16px;
 }
 
-.Navi_Coll_Tab { margin-right: 1px; padding: 6px 16px; color: #887; }
-.Navi_Coll_Tab:hover { background: #f2f0e4; }
+.Navi_Coll_Tab { margin-right: 1px; padding: 6px 16px; }
+.Navi_Coll_Tab:hover { background: #e8e4d0; }
 .Navi_Coll_Tab_Sel,
-.Navi_Coll_Tab_Sel:hover { background: #69d; background: #bb9; color: #fff; }
+.Navi_Coll_Tab_Sel:hover { background: #69d; background: #aa8; background: #383730; color: #fff; }
 
 
 .Navi_Enter
 {
 	cursor: default;
 	width: 17em;
-	padding: 3em 5em;
+	padding: 2em 4em;
 	line-height: 36px;
 	font-size: 22px;
 }
@@ -71,5 +71,10 @@ html, input, textarea, button
 
 .Navi_Ent_Item:hover  { background: #f2f0e4; }
 
+.Content
+{
+	padding: 2px;
+}
 
+.Content h2  { margin: 0;  padding: 2px 4px;  }
 

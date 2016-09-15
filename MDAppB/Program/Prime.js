@@ -15,6 +15,11 @@ function class_def( base, dec )
 	
 	dec.call( ctor.prototype, base && base.prototype, ctor );
 	
+	ctor.toString = function()
+	{
+		return ctor.prototype.Initiate.toString();
+	};
+	
 	return ctor;
 }
 

@@ -4,7 +4,7 @@
 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-<title>MDAppB 0912</title>
+<title>MDAppB</title>
 
 <link rel="stylesheet" href="./Program/Style.css" />
 
@@ -16,18 +16,12 @@
 
 <p id="Log"></p>
 
-<script>
-
-var MD_Data_Dir = "Data_u8\\";
-var MD_HTML_Demo = true;
-
-</script>
-
 <script src="./Program/Prime.js"></script>
 <script src="./Program/FS.js"></script>
 <script src="./Program/Tree.js"></script>
 <script src="./Program/MD.js"></script>
 <script src="./Program/UI.js"></script>
+<script src="./Program/Content.js"></script>
 <script src="./Program/Labo.js"></script>
 
 <script>
@@ -38,12 +32,12 @@ new function()
 	
 	window.onload = function()
 	{
-		md_app = new UI.App( e_id( "Main" ) );
+		md_app = new UI.App( e_id( "Main" ), "Data_u8\\", true );
 	};
 
 	window.onbeforeunload = function()
 	{
-		md_app.Terminate();
+		md_app && md_app.Terminate();
 	};
 
 };

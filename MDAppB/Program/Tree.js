@@ -8,13 +8,20 @@ var Tree = class_def
 		{
 			Base.Initiate.call( this );
 			
+			this.Types = {};
 			this.Root = null;
 		};
 		
 		this.SetSource = function( src )
 		{
-			this.Root = new Node( this, null, src, 0 );
+			this.Root = this.CreateNode( null, src, 0 );
 			this.Notify( "Update", [] );
+		};
+		
+		this.CreateNode = function( com, src, order )
+		{
+			var type = this.Types[ src && src.Type ] || Node;
+			return new type( this, com, src, order );
 		};
 		
 		this.Node_Path = function( path )
@@ -56,7 +63,7 @@ var Node = class_def
 			{
 				var f_src = src.Fields[ i ];
 				
-				var field = new Node( tree, this, f_src, i );
+				var field = tree.CreateNode( this, f_src, i );
 				this.Fields.push( field );
 				
 				var f_name = f_src.Name;
@@ -72,6 +79,11 @@ var Node = class_def
 		this.GetAttr = function( name, failv )
 		{
 			return this.Src && this.Src[ name ] !== undefined ? this.Src[ name ] : failv;
+		};
+		
+		this.GetFields = function()
+		{
+			return this.Fields;
 		};
 		
 		this.GetField = function( name )
@@ -110,6 +122,19 @@ var Node = class_def
 				callback( n, path.pop() );
 			}
 		};
+		
+		this.Add = function( src )
+		{
+			if( this.Tree != null )
+			{
+				var order = this.Fields.length;
+				var node = this.Tree.CreateNode( this, src, order );
+				this.Fields.push( node );
+				var name = src && src.Name;
+				if( name != null )  this.Names[ name ] = node;
+				log( node );
+			}
+		}
 		
 		this.toString = function( i )
 		{

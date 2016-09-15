@@ -1,8 +1,29 @@
-﻿var FSBase = class_def
+﻿var File = class_def
 (
 	null,
 	function()
 	{
+		
+	}
+);
+
+
+var FSBase = class_def
+(
+	null,
+	function()
+	{
+		this.Initiate = function( data_dir )
+		{
+			this.DataDir = data_dir;
+		};
+		
+		//    //
+		
+		this.GetFile = function( filepath ){}
+		
+		//    //
+		
 		this.LoadValue = function( path, create, failv )
 		{
 			var json = this.Load( path, create );
@@ -11,23 +32,34 @@
 	}
 );
 
+
 var HTAFS = class_def
 (
 	FSBase,
-	function()	
+	function( Base )	
 	{
 		var FS;
 		
-		this.Initiate = function()
+		this.Initiate = function( data_dir )
 		{
+			Base.Initiate.call( this, data_dir );
 			FS = new ActiveXObject( "Scripting.FileSystemObject" );
 		};
+		
+		//    //
+		
+		this.GetFile = function( filepath )
+		{
+			
+		};
+		
+		//    //
 		
 		this.Load = function( path, create, failv )
 		{
 			try
 			{
-				var stream = FS.OpenTextFile( path, 1, create, -1 );
+				var stream = FS.OpenTextFile( this.DataDir + path, 1, create, -1 );
 				return stream.AtEndOfLine ? "" : stream.ReadAll();
 			}
 			catch( exc )
@@ -65,7 +97,6 @@ var HTTPFS = class_def
 		function load( path, failv )
 		{
 			var req = new_req();
-			
 			path = path.replace( /\\/, "/" );
 			req.open( "get", path, false );
 			req.send( null );
@@ -76,7 +107,7 @@ var HTTPFS = class_def
 		
 		this.Load = function( path, create, failv )
 		{
-			return load( path, failv );
+			return load( this.DataDir + path, failv );
 		};
 		
 		
@@ -86,6 +117,3 @@ var HTTPFS = class_def
 		};
 	}
 );
-
-var FS = MD_HTML_Demo == true ? new HTTPFS : new HTAFS; 
-

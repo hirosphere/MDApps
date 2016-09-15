@@ -7,49 +7,68 @@
 			"Fields":
 			[
 				{
-					"Name": "予定"
+					"Name": "予定", "Type": ""
 				},
 				{
-					"Name": "記録"
+					"Name": "記録", "Type": ""
 				}
 			]
 		},
 		{
-			"Name": "副資材",
+			"Name": "資材",
 			"Fields":
 			[
 				{
-					"Name": "在庫"
+					"Name": "在庫", "Type": ""
 				},
 				{
-					"Name": "発注"
+					"Name": "発注", "Type": ""
 				},
 				{
-					"Name": "受入れ"
+					"Name": "受入れ", "Type": ""
 				},
 				{
-					"Name": "使用記録"
+					"Name": "使用記録", "Type": ""
 				}
 			]
 		},
 		{
-			"Name": "定義",
+			"Name": "定義", "Title": "各種定義",
 			"Fields":
 			[
-				{ "Name": "製品" },
-				{ "Name": "資材" },
-				{ "Name": "資材業者" }
+				{
+					"Type": "",
+					"Name": "製品"
+				},
+				{
+					"Type": "資材定義",
+					"Name": "資材",
+					"Title": "資材定義"
+				},
+				{
+					"Type": "",
+					"Name":"資材業者",
+					"Title": "資材業者定義"
+				}
 			]
 		},
 		{
-			"Name": "ラボ",
+			"Name": "Labo",
 			"Fields":
 			[
 				{
-					"Name": "入力ラボ"
+					"Type": "Eval",
+					"Name": "Eval"
 				},
 				{
-					"Name": "表示ラボ"
+					"Type": "Memo",
+					"Name": "Memo"
+				},
+				{
+					"Name": "入力"
+				},
+				{
+					"Name": "表示"
 				},
 				{
 					"Name": "Dyn Fract",
