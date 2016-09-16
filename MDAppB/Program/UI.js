@@ -14,7 +14,7 @@ UI.App = class_def
 			
 			var page_tree = new Tree();
 			
-			page_tree.Types,Memo = Labo.MemoNode;
+			page_tree.Types.Memo = Labo.MemoNode;
 			
 			page_tree.SetSource( md.ページ構成 );
 			
@@ -292,7 +292,7 @@ UI.Content = class_def
 			
 			this.e = enew_c( "div", com, this.CssClass );
 			
-			this.BuildTitle( this.e, this.Title || node && node.Caption() );
+			this.BuildTitle( this.e, node && node.Caption() );
 			this.BuildTop( this.e, node, navi, md );
 			this.BuildMiddle( this.e, node, navi, md );
 			this.BuildBottom( this.e, node, navi, md );

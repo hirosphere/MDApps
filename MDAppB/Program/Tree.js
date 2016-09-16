@@ -132,7 +132,6 @@ var Node = class_def
 				this.Fields.push( node );
 				var name = src && src.Name;
 				if( name != null )  this.Names[ name ] = node;
-				log( node );
 			}
 		}
 		

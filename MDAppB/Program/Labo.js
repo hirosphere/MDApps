@@ -4,14 +4,20 @@ var Labo = {};
 Labo.MemoNode = class_def
 (
 	Node,
-	function()
+	function( Base )
 	{
+		this.Initiate = function( tree, com, src, order )
+		{
+			Base.Initiate.call( this, tree, com, src, order );
+		};
+		
 		this.GetFields = function()
 		{
-			if( this.Fields.length == 0 )  for( var n = 0; n < 5; n ++ )
+			var frac = this.GetAttr( "Frac", "" );
+			
+			if( this.Fields.length == 0 )  for( var n = 0; n < 10; n ++ )
 			{
-				this.Add( { Type: "Memo", Name: "M-" + ( n + 1 ) } );
-				log( n );
+				this.Add( { Type: "Memo", Name: "M" + frac + n, Frac: frac + n } );
 			}
 			
 			return this.Fields;
