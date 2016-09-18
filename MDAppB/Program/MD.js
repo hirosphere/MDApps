@@ -7,9 +7,16 @@ MD.App = class_def
 	{
 		this.Initiate = function( data_dir, demo_mode )
 		{
-			this.FS = demo_mode ? new HTTPFS( data_dir ) : new HTAFS( data_dir );
+			this.FS = new FS( data_dir, demo_mode );
 			
-			this.ページ構成 = this.FS.LoadValue( "ページ構成.json" );
+			
+			var pd = this.FS.Node_Path( "/ページ構成.json" );
+			
+			this.MemoRecord = new Labo.MemoRecord( this.FS.MakeByPath( "/Memo" ) );
+			
+			
+			this.PhyFS = demo_mode ? new FS.Phy.HTTP( data_dir ) : new FS.Phy.WSH( data_dir );
+			this.ページ構成 = this.PhyFS.LoadValue( "ページ構成.json" );
 		};
 	}
 );
@@ -17,23 +24,37 @@ MD.App = class_def
 MD.Record = class_def
 (
 	Model,
-	function()
+	function( Base )
 	{
-		this.Add = function( key, fileds )
+		var next_id = 1000;
+		
+		this.Initiate = function( folder )
 		{
+			Base.Initiate.call( this );
+			this.Folder = folder;
 		};
 		
-		this.File_Key = function( key ) { return key + ".txt"; };
-	}
-);
-
-
-
-MD.メッセージ = class_def
-(
-	MD.Record,
-	function()
-	{
+		this.NewKey = function( base )
+		{
+			return base + ".A" + next_id ++;
+		};
+		
+		this.Write = function( key, data )
+		{
+			log( [ "MD.Recored.Write", this.Folder.GetPath(), key ] );
+			//var folder = this.Folder.MakeByPath( key );
+			//log( folder );
+		};
+		
+		this.MakeStorgeNode = function( key )
+		{
+			
+		};
+		
+		this.MakeStoragePath = function( key )
+		{
+			
+		};
 	}
 );
 

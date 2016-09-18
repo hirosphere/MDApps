@@ -61,6 +61,11 @@
 					"Name": "Eval"
 				},
 				{
+					"Type": "FS1",
+					"Name": "FS",
+					"Title": "File & Rec"
+				},
+				{
 					"Type": "Memo",
 					"Name": "Memo"
 				},

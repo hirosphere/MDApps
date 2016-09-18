@@ -20,11 +20,12 @@ UI.App = class_def
 			
 			var navi = new UI.NaviModel( page_tree );
 			new UI.Navi( this.e, navi );
-			new UI.Contents( this.e, navi, MD );
+			new UI.Contents( this.e, navi, md );
 			
 			//navi.Select( page_tree.Node_Path( "MDApp" ) );
-			navi.Select( page_tree.Node_Path( "MDApp/定義/資材" ) );
-			navi.Select( page_tree.Node_Path( "MDApp/Labo/Memo" ) );
+			//navi.Select( page_tree.Node_Path( "MDApp/定義/資材" ) );
+			//navi.Select( page_tree.Node_Path( "MDApp/Labo/Memo" ) );
+			navi.Select( page_tree.Node_Path( "MDApp/Labo/Memo/2016/10/15" ) );
 		};
 		
 		this.Terminate = function()
@@ -269,7 +270,7 @@ UI.Contents = class_def
 		this.CreateContent = function( com, node )
 		{
 			var typename = node && node.Type || "";
-			var ctor = UI.Content_Type[ typename ] || UI.Content;
+			var ctor = UI.Content.Types[ typename ] || UI.Content;
 			var content = new ctor( com, node, this.Navi, this.MD );
 			return content;
 		}
@@ -321,11 +322,7 @@ UI.Content = class_def
 );
 
 
+UI.Content.Types = {};
 
 
-
-
-
-
-
-
+//  End  //

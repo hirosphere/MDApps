@@ -1,6 +1,17 @@
 ﻿
 var Labo = {};
 
+
+Labo.MemoRecord = class_def
+(
+	MD.Record,
+	function( Base )
+	{
+		
+	}
+);
+
+
 Labo.MemoNode = class_def
 (
 	Node,
@@ -117,7 +128,7 @@ Labo.DateMemo = class_def
 	}
 );
 
-UI.Content_Type.Memo = class_def
+UI.Content.Types.Memo = class_def
 (
 	UI.Content,
 	function( Base )
@@ -125,13 +136,26 @@ UI.Content_Type.Memo = class_def
 		this.BuildBottom = function( e )
 		{
 			var hr = enew( "div", e );
-			enew_t( "button", hr, "保存" );
+			var wr = enew_t( "button", hr, "保存", { onclick: save } );
 			enew( "textarea", e, null, { display: "block", width: "600px", height: "90px" } );
+			
+			var self = this;
+			
+			function save()
+			{
+				if( self.Node.Date )
+				{
+					var key = date_format( "{YYYY}{MM}{DD}", self.Node.Date )
+					self.MD.MemoRecord.Write( key );
+				}
+			}
+			
+			save();
 		};
 	}
 );
 
-UI.Content_Type.Eval = class_def
+UI.Content.Types.Eval = class_def
 (
 	UI.Content,
 	function()
@@ -145,9 +169,16 @@ UI.Content_Type.Eval = class_def
 			var output = enew( "textarea", hrz, {  }, { display: "block", width: w, height: "70px" } );
 			var input = enew( "textarea", hrz, {  }, { display: "block", width: w, height: "70px" } );
 			
+			var self = this;
+			
 			ex.onclick = function()
 			{
-				output.value = UI.eval( code.value, input.value );
+				output.value = UI.eval
+				(
+					code.value, input.value,
+					self.MD,
+					self.Node
+				);
 			};
 		};
 		
@@ -158,9 +189,22 @@ UI.Content_Type.Eval = class_def
 	}
 );
 
-UI.eval = function( code, input, e )
+UI.eval = function( code, input, md, node )
 {
 	try { return eval( code ); }
 	catch( exc ) { return exc.message; }
 };
+
+
+UI.Content.Types.FS_Labo = class_def
+(
+	UI.Content,
+	function()
+	{
+		this.BuildTop = function( e )
+		{
+			this.FS;
+		};
+	}
+);
 

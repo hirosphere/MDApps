@@ -14,7 +14,13 @@ var Tree = class_def
 		
 		this.SetSource = function( src )
 		{
-			this.Root = this.CreateNode( src );
+			this.SetRoot( this.CreateNode( src ) );
+		};
+		
+		this.SetRoot = function( node )
+		{
+			this.Root = node;
+			if( node )  node.Tree = this;
 			this.Notify( "Update", [] );
 		};
 		
@@ -24,14 +30,15 @@ var Tree = class_def
 			return new type( src, this );
 		};
 		
-		this.Node_Path = function( path )
+		this.Node_Path = function( path, force_make )
 		{
-			var node = this.Root;
+			var node = iter = this.Root;
 			var path = path.split( "/" );
 			
-			for( var n = 1; node != null && n < path.length; n ++ )
+			for( var n = 1; iter != null && n < path.length; n ++ )
 			{
-				node = node.GetField( path[ n ] );
+				iter = iter.GetField( path[ n ] );
+				if( iter )  node = iter;
 			}
 			
 			return node;
@@ -121,7 +128,7 @@ var Node = class_def
 				path.push( node );
 			}
 			
-			loop_ct = Math.max( loop_ct, path.length );
+			loop_ct = Math.max( loop_ct || 0, path.length );
 			
 			for( var n = 0; n < loop_ct; n ++ )
 			{
