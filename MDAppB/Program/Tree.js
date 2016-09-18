@@ -14,14 +14,14 @@ var Tree = class_def
 		
 		this.SetSource = function( src )
 		{
-			this.Root = this.CreateNode( null, src, 0 );
+			this.Root = this.CreateNode( src );
 			this.Notify( "Update", [] );
 		};
 		
-		this.CreateNode = function( com, src, order )
+		this.CreateNode = function( src )
 		{
 			var type = this.Types[ src && src.Type ] || Node;
-			return new type( this, com, src, order );
+			return new type( src, this );
 		};
 		
 		this.Node_Path = function( path )
@@ -49,31 +49,37 @@ var Node = class_def
 	null,
 	function()
 	{
-		this.Initiate = function( tree, com, src, order )
+		this.Type = "";
+		this.Name = "";
+		this.Label = "";
+		
+		this.Initiate = function( src, tree )
 		{
 			RUId.Next( this );
 			
 			this.Tree = tree;
-			this.Com = com;
+			this.Com = null;
 			this.Src = src;
-			this.Order = order;
+			this.Type = this.GetAttr( "Type", this.Type );
+			this.Name = this.GetAttr( "Name", this.Name );
+			this.Label = this.GetAttr( "Label", this.Label );
+			this.Order = 0;
 			this.Fields = [];
 			this.Names = {};
 			if( src && src.Fields ) for( var i = 0; i < src.Fields.length; i ++ )
 			{
-				var f_src = src.Fields[ i ];
-				
-				var field = tree.CreateNode( this, f_src, i );
-				this.Fields.push( field );
-				
-				var f_name = f_src.Name;
-				if( f_name != null ) this.Names[ f_name ] = field;
+				this.CreateField( src.Fields[ i ] );
 			}
 		};
 		
-		this.Caption = function( failv )
+		this.GetLabel = function( failv )
 		{
-			return this.GetAttr( "Title", this.GetAttr( "Name", failv ) );
+			return this.Label || this.Name || failv;
+		};
+		
+		this.GetTitle = function( failv )
+		{
+			return this.GetAttr( "Title", this.GetLabel( failv ) );
 		};
 		
 		this.GetAttr = function( name, failv )
@@ -123,17 +129,38 @@ var Node = class_def
 			}
 		};
 		
-		this.Add = function( src )
+		this.CreateField = function( src, order )
 		{
-			if( this.Tree != null )
+			var name = ( src && src.Name != null ? src.Name : null );
+			var field = ( this.Tree ? this.Tree.CreateNode( src ) : new Node( src ) );
+			this.Add( field, order, name );
+		};
+		
+		this.Add = function( field, order, name )
+		{
+			if( field == null )  return;
+			
+			field.Tree = this.Tree;
+			field.Com = this;
+			
+			if( order == null )  order = this.Fields.length;
+			
+			this.Fields.splice( order, 0, field );
+			field.Order = order;
+			
+			for( var n = order + 1; n < this.Fields.length; n ++ )
 			{
-				var order = this.Fields.length;
-				var node = this.Tree.CreateNode( this, src, order );
-				this.Fields.push( node );
-				var name = src && src.Name;
-				if( name != null )  this.Names[ name ] = node;
+				this.Fields[ n ].Order = n;
 			}
-		}
+			
+			if( name != null )
+			{
+				this.Names[ name ] = field;
+				field.Name = name + "";
+			}
+			
+			return order;
+		};
 		
 		this.toString = function( i )
 		{

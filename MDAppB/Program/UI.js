@@ -125,7 +125,7 @@ UI.Navi.Path = class_def
 			{
 				node = new_node;
 				
-				e_plain( e, node == null ? ".." : node.GetAttr( "Name", "----" ) );
+				e_plain( e, node == null ? ".." : node.GetLabel() );
 				e_class_set( e, "Navi_Path_Tab_Sel",  node == navi.Current );
 				e_class_set( e, "Navi_Path_Tab_Vis",  node != null );
 				s.style.display = ( node != null && node != navi.Current ) ? "inline" : "none";
@@ -185,7 +185,7 @@ UI.Navi.Coll = class_def
 			{
 				node = new_node;
 				
-				e_plain( e, node == null ? ".." : node.GetAttr( "Name", "----" ) );
+				e_plain( e, node == null ? ".." : node.GetLabel() );
 				e_class_set( e, "Navi_Coll_Tab_Sel", node == navi.Current );
 				e.style.display = node ? "inline" : "none";
 				//s.style.display = ( node && node.Next() ) ? "inline" : "none";
@@ -215,7 +215,7 @@ UI.Navi.Enter = class_def
 		
 		function Tab( com, css_class, node, navi )
 		{
-			var e = enew_ct( "div", com, css_class, node.Caption( "----" ) );
+			var e = enew_ct( "div", com, css_class, node.GetTitle( "----" ) );
 			
 			e.onmousedown = function()
 			{
@@ -268,7 +268,7 @@ UI.Contents = class_def
 		
 		this.CreateContent = function( com, node )
 		{
-			var typename = node && node.GetAttr( "Type" ) || "";
+			var typename = node && node.Type || "";
 			var ctor = UI.Content_Type[ typename ] || UI.Content;
 			var content = new ctor( com, node, this.Navi, this.MD );
 			return content;
@@ -292,7 +292,7 @@ UI.Content = class_def
 			
 			this.e = enew_c( "div", com, this.CssClass );
 			
-			this.BuildTitle( this.e, node && node.Caption() );
+			this.BuildTitle( this.e, node && node.GetTitle() );
 			this.BuildTop( this.e, node, navi, md );
 			this.BuildMiddle( this.e, node, navi, md );
 			this.BuildBottom( this.e, node, navi, md );

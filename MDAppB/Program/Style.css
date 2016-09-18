@@ -25,8 +25,8 @@ html, input, textarea, button
 {
 	margin-bottom: 1px;
 	background: #5a2;
-	height: 17px;
-	line-height: 17px;
+	height: 21px;
+	line-height: 21px;
 	font-size: 15px;
 	color: #fff;
 }
@@ -47,7 +47,7 @@ html, input, textarea, button
 	font-size: 16px;
 }
 
-.Navi_Coll_Tab { margin-right: 1px; padding: 6px 16px; }
+.Navi_Coll_Tab { margin-right: 1px; padding: 6px 8px; }
 .Navi_Coll_Tab:hover { background: #e8e4d0; }
 .Navi_Coll_Tab_Sel,
 .Navi_Coll_Tab_Sel:hover { background: #69d; background: #aa8; background: #383730; color: #fff; }
