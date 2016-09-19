@@ -10,7 +10,7 @@ MD.App = class_def
 			this.FS = new FS( data_dir, demo_mode );
 			
 			
-			var pd = this.FS.Node_Path( "/ページ構成.json" );
+			var pd = this.FS.MakeNodeByPath( "/ページ構成.json" );
 			
 			this.MemoRecord = new Labo.MemoRecord( this.FS.MakeByPath( "/Memo" ) );
 			

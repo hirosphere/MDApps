@@ -22,10 +22,11 @@ UI.App = class_def
 			new UI.Navi( this.e, navi );
 			new UI.Contents( this.e, navi, md );
 			
-			//navi.Select( page_tree.Node_Path( "MDApp" ) );
-			//navi.Select( page_tree.Node_Path( "MDApp/定義/資材" ) );
-			//navi.Select( page_tree.Node_Path( "MDApp/Labo/Memo" ) );
-			navi.Select( page_tree.Node_Path( "MDApp/Labo/Memo/2016/10/15" ) );
+			navi.Select( page_tree.Root );
+			//navi.Select( page_tree.MakeNodeByPath( "MDApp", 1 ) );
+			//navi.Select( page_tree.MakeNodeByPath( "MDApp/定義/資材", 1 ) );
+			navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Eval", 1 ) );
+			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Memo/2016/10/15", 2 ) );
 		};
 		
 		this.Terminate = function()

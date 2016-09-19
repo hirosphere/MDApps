@@ -24,10 +24,10 @@ html, input, textarea, button
 .Navi_Path
 {
 	margin-bottom: 1px;
-	background: #5a2;
-	height: 21px;
-	line-height: 21px;
-	font-size: 15px;
+	background: #8b5;
+	height: 23px;
+	line-height: 23px;
+	font-size: 18px;
 	color: #fff;
 }
 
@@ -43,21 +43,21 @@ html, input, textarea, button
 {
 	border-bottom: solid 1px #ddb;
 	padding-bottom: 1px;
-	line-height: 36px;
+	line-height: 40px;
 	font-size: 16px;
 }
 
-.Navi_Coll_Tab { margin-right: 1px; padding: 6px 8px; }
+.Navi_Coll_Tab { margin-right: 1px; padding: 8px 11px; }
 .Navi_Coll_Tab:hover { background: #e8e4d0; }
 .Navi_Coll_Tab_Sel,
-.Navi_Coll_Tab_Sel:hover { background: #69d; background: #aa8; background: #383730; color: #fff; }
+.Navi_Coll_Tab_Sel:hover { background: #69d; background: #aa8; background: #181818; color: #fff; }
 
 
 .Navi_Enter
 {
 	cursor: default;
 	width: 17em;
-	padding: 2em 4em;
+	padding: 2em 2em;
 	line-height: 36px;
 	font-size: 22px;
 }

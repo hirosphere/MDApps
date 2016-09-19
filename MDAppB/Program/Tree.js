@@ -30,18 +30,40 @@ var Tree = class_def
 			return new type( src, this );
 		};
 		
-		this.Node_Path = function( path, force_make )
+		this.MakeNodeByPath_ = function( path, level )
 		{
-			var node = iter = this.Root;
-			var path = path.split( "/" );
+			var path_array = path.split( "/" );
+			level = level || 0;
 			
-			for( var n = 1; iter != null && n < path.length; n ++ )
+			if( path.length <= 1 )  return this.Root;
+			
+			path_array.shift();
+			return this.Root && this.Root.MakeMicroByPathArray( path_array, level ) || null;
+		};
+		
+		this.MakeNodeByPath = function( path, level )
+		{
+			var path = path.split( "/" );
+			level = level || 0;
+			
+			var field = null, iter = this.Root;
+			
+			for( var n = 1; n < path.length; n ++ )
 			{
-				iter = iter.GetField( path[ n ] );
-				if( iter )  node = iter;
+				var name = path[ n ];
+				
+				field = iter.GetField( name );
+				if( field == null )
+				{
+					if( level == 0 )  return null;
+					if( level == 1 )  return iter;
+					
+					filed = iter.MakeField( name );
+				}
+				iter = field;
 			}
 			
-			return node;
+			return field;
 		};
 		
 		this.toString = function()
@@ -79,6 +101,9 @@ var Node = class_def
 			}
 		};
 		
+		
+		//*  Attritute *//
+		
 		this.GetLabel = function( failv )
 		{
 			return this.Label || this.Name || failv;
@@ -94,15 +119,8 @@ var Node = class_def
 			return this.Src && this.Src[ name ] !== undefined ? this.Src[ name ] : failv;
 		};
 		
-		this.GetFields = function()
-		{
-			return this.Fields;
-		};
 		
-		this.GetField = function( name )
-		{
-			return this.Names[ name ];
-		};
+		//*  Coll  *//
 		
 		this.First = function()
 		{
@@ -114,9 +132,29 @@ var Node = class_def
 			return this.Com ? this.Com.Fields[ this.Order + 1 ] : null;
 		};
 		
-		this.HasFields = function()
+		
+		//*  Path  *//
+		
+		
+		this.MakeMicro = function( path )
 		{
-			return this.Fields.length > 0;
+			if( path.constructor == String )  path = path.split( "/" );
+			
+			var field = this.MakeField( path.shift() );
+			
+			if( path.length > 0 )
+			{
+				return field.MakeMicro( path );
+			}
+			
+			return field;
+		};
+		
+		this.GetPath = function()
+		{
+			var path = [];
+			for( var node = this; node; node = node.Com )  path.unshift( node.Name );
+			return path.join( "/" );
 		};
 		
 		this.PathScan = function( callback, loop_ct )
@@ -134,6 +172,44 @@ var Node = class_def
 			{
 				callback( n, path.pop() );
 			}
+		};
+		
+		
+		//*  Fields  *//
+		
+		this.MakeFields =
+		this.GetFields = function()
+		{
+			return this.Fields;
+		};
+		
+		this.GetField = function( name )
+		{
+			return this.Names[ name ];
+		};
+		
+		this.HasDynFields = function()
+		{
+			return false;
+		};
+		
+		this.HasFields = function()
+		{
+			return this.Fields.length > 0;
+		};
+		
+		
+		//*  Field  *//
+		
+		this.MakeField = function( name, src )
+		{
+			var field = this.GetField( name );
+			if( field == null )
+			{
+				field = this.Tree.CreateNode( src );
+				this.Add( field, null, name );
+			}
+			return field;
 		};
 		
 		this.CreateField = function( src, order )
@@ -169,9 +245,12 @@ var Node = class_def
 			return order;
 		};
 		
+		
+		//*    *//
+		
 		this.toString = function( i )
 		{
-			return this.Src && this.Src.Name || "";
+			return this.Name;
 		};
 	}
 );

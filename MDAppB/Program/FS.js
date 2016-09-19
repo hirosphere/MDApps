@@ -47,18 +47,6 @@ FS.Node = class_def
 			Base.Initiate.call( this );
 			this.Name = name;
 		};
-		
-		this.GetPath = function()
-		{
-			var rt = [];
-			this.PathScan
-			(
-				function( n, node ) { rt.push( node.Name ); }
-			);
-			return rt.join( "/" );
-		};
-		
-		this.toString = function() { return this.Name; };
 	}
 );
 
@@ -73,8 +61,6 @@ FS.Folder = class_def
 			Base.Initiate.call( this, name );
 			log( "FS.Folder.Initiate : " + this.Name );
 		};
-		
-		this.toString = function() { return this.Name; };
 	}
 );
 
