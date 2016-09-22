@@ -25,8 +25,8 @@ UI.App = class_def
 			navi.Select( page_tree.Root );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp", 1 ) );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp/定義/資材", 1 ) );
-			navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Eval", 1 ) );
-			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Memo/2016/10/15", 2 ) );
+			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Eval", 1 ) );
+			navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Memo/2016/11/15", 2 ) );
 		};
 		
 		this.Terminate = function()
@@ -209,7 +209,7 @@ UI.Navi.Enter = class_def
 			this.p = enew_c( "div", this.e, "_Path" );
 			this.fs = enew_c( "div", this.e, "_Fields" );
 			
-			if( node )  for( var n in node.GetFields() )
+			if( node )  for( var n in node.MakeFields() )
 			{
 				new Tab( this.fs, "Navi_Ent_Item", node.Fields[ n ], navi );
 			}

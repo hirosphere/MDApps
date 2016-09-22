@@ -30,25 +30,25 @@ var Tree = class_def
 			return new type( src, this );
 		};
 		
-		this.MakeNodeByPath_ = function( path, level )
+		this.MakeNodeByPath = function( path, level )
 		{
-			var path_array = path.split( "/" );
+			var path = path.split( "/" );
 			level = level || 0;
 			
 			if( path.length <= 1 )  return this.Root;
 			
-			path_array.shift();
-			return this.Root && this.Root.MakeMicroByPathArray( path_array, level ) || null;
+			path.shift();
+			return this.Root && this.Root.MakeMicro( path, level ) || null;
 		};
 		
-		this.MakeNodeByPath = function( path, level )
+		this.MakeNodeByPath_ = function( path, level )
 		{
 			var path = path.split( "/" );
 			level = level || 0;
 			
 			var field = null, iter = this.Root;
 			
-			for( var n = 1; n < path.length; n ++ )
+			for( var n = 1; iter != null && n < path.length; n ++ )
 			{
 				var name = path[ n ];
 				
@@ -59,6 +59,7 @@ var Tree = class_def
 					if( level == 1 )  return iter;
 					
 					filed = iter.MakeField( name );
+					log(  [ name, field ].join( ", " ) );
 				}
 				iter = field;
 			}
@@ -90,11 +91,11 @@ var Node = class_def
 			this.Com = null;
 			this.Src = src;
 			this.Type = this.GetAttr( "Type", this.Type );
-			this.Name = this.GetAttr( "Name", this.Name );
-			this.Label = this.GetAttr( "Label", this.Label );
+			this.Label = this.GetAttr( "Label", this.GetAttr( "Name", this.Label ) );
 			this.Order = 0;
 			this.Fields = [];
 			this.Names = {};
+			
 			if( src && src.Fields ) for( var i = 0; i < src.Fields.length; i ++ )
 			{
 				this.CreateField( src.Fields[ i ] );
@@ -136,18 +137,16 @@ var Node = class_def
 		//*  Path  *//
 		
 		
-		this.MakeMicro = function( path )
+		this.MakeMicro = function( path, level )
 		{
 			if( path.constructor == String )  path = path.split( "/" );
 			
-			var field = this.MakeField( path.shift() );
+			this.MakeFields();
+			var field = this.MakeField( path.shift(), level == 2 );
 			
-			if( path.length > 0 )
-			{
-				return field.MakeMicro( path );
-			}
+			if( field == null )  return level == 1 ? this : null;
 			
-			return field;
+			return path.length == 0 ? field : field.MakeMicro( path, level );
 		};
 		
 		this.GetPath = function()
@@ -183,11 +182,6 @@ var Node = class_def
 			return this.Fields;
 		};
 		
-		this.GetField = function( name )
-		{
-			return this.Names[ name ];
-		};
-		
 		this.HasDynFields = function()
 		{
 			return false;
@@ -203,20 +197,15 @@ var Node = class_def
 		
 		this.MakeField = function( name, src )
 		{
-			var field = this.GetField( name );
-			if( field == null )
-			{
-				field = this.Tree.CreateNode( src );
-				this.Add( field, null, name );
-			}
-			return field;
+			return this.GetField( name ) || this.CreateField( src, null, name );
 		};
 		
-		this.CreateField = function( src, order )
+		this.CreateField = function( src, order, name )
 		{
-			var name = ( src && src.Name != null ? src.Name : null );
+			if( name == null && src && src.Name != null )  name = src.Name;
 			var field = ( this.Tree ? this.Tree.CreateNode( src ) : new Node( src ) );
 			this.Add( field, order, name );
+			return field;
 		};
 		
 		this.Add = function( field, order, name )
@@ -242,9 +231,13 @@ var Node = class_def
 				field.Name = name + "";
 			}
 			
-			return order;
+			return field;
 		};
 		
+		this.GetField = function( name )
+		{
+			return this.Names[ name ];
+		};
 		
 		//*    *//
 		

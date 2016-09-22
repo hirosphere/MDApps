@@ -61,23 +61,12 @@
 					"Name": "Eval"
 				},
 				{
-					"Type": "FS1",
-					"Name": "FS",
-					"Title": "File & Rec"
-				},
-				{
 					"Type": "Memo",
 					"Name": "Memo"
 				},
 				{
-					"Name": "入力"
-				},
-				{
-					"Name": "表示"
-				},
-				{
-					"Name": "Dyn Fract",
-					"Type": "DynFract"
+					"Type": "FS_Labo",
+					"Name": "FS"
 				}
 			]
 		}

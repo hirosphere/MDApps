@@ -1,4 +1,6 @@
 ﻿
+var Err = {};
+
 function class_def( base, dec )
 {
 	var ctor = function()
@@ -67,6 +69,24 @@ function str_right( ct, str )
 {
 	return str.substring( str.length - ct, str.length );
 }
+
+
+function str_format( format, fs )
+{
+	return format.replace
+	(
+		/(`.)|{((`.|[^}])*)}/g, 
+		function( all, a, b )
+		{
+			if( a ) return a.replace( "`", "" );
+			var name = b.replace( /`/g, "" );
+			return fs[ name ];
+		}
+	 );
+}
+
+var sf = str_format;
+
 
 function ht_plain( plain )
 {
@@ -281,9 +301,10 @@ function json_str_conv( m )
 }
 
 
-function value_json( json )
+function value_json( json, failv )
 {
-	return eval( "(" + json + "\r\n)" );
+	try { return eval( "(" + json + "\r\n)" ); }
+	catch( exc ) { return failv; }
 }
 
 

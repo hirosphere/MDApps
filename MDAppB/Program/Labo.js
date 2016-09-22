@@ -4,10 +4,15 @@ var Labo = {};
 
 Labo.MemoRecord = class_def
 (
-	MD.Record,
+	Record,
 	function( Base )
 	{
-		
+		this.MakeFilePath = function( key )
+		{
+			var m = key.match( /(\d{4})(\d{2})(\d{2})/ );
+			
+			return m && sf( "{1}/{1}_{2}.json", m ) || null;
+		};
 	}
 );
 
@@ -22,17 +27,16 @@ Labo.MemoNode = class_def
 			Base.Initiate.call( this, tree, src );
 		};
 		
-		this.GetFields = function()
+		this.MakeFields = function()
 		{
-			if( this.Maked )  return this.Fields;
-			
+			if( this.Fields.length > 0 )  return this.Fields;
 			
 			for( var i = 0; i < 10; i ++ )
 			{
-				this.Add( new Labo.YearMemo( 2010 + i ) );
+				var year = 2010 + i;
+				this.Add( new Labo.YearMemo( year ), null, year );
 			}
 			
-			this.Maked = true;
 			return this.Fields;
 		};
 	}
@@ -46,8 +50,7 @@ Labo.YearMemo = class_def
 		this.Initiate = function( year )
 		{
 			Base.Initiate.call( this );
-			this.Type = "Memo"
-			this.Name = year;
+			this.Type = "Memo";
 			this.Label = year + "年";
 			this.Year = year;
 		};
@@ -57,14 +60,15 @@ Labo.YearMemo = class_def
 			return this.Year + "年";
 		};
 		
-		this.GetFields = function()
+		this.MakeFields = function()
 		{
 			if( this.Fields.length > 0 )  return this.Fields;
 			
 			for( var i = 1; i <= 12; i ++ )
 			{
-				this.Add( new Labo.MonthMemo( this.Year, i ) );
+				this.Add( new Labo.MonthMemo( this.Year, i ), null, i );
 			}
+			
 			return this.Fields;
 		};
 	}
@@ -79,7 +83,6 @@ Labo.MonthMemo = class_def
 		{
 			Base.Initiate.call( this );
 			this.Type = "Memo"
-			this.Name = month;
 			this.Label = month + "月";
 			this.Year = year;
 			this.Month = month;
@@ -91,7 +94,7 @@ Labo.MonthMemo = class_def
 			return this.Year + "年" + this.Name + "月";
 		};
 		
-		this.GetFields = function()
+		this.MakeFields = function()
 		{
 			if( this.Fields.length > 0 )  return this.Fields;
 			
@@ -116,7 +119,6 @@ Labo.DateMemo = class_def
 		{
 			Base.Initiate.call( this );
 			this.Type = "Memo";
-			this.Name = date.getDate();
 			this.Label = date.getDate() + "";
 			this.Date = new Date( date.getTime() );
 		};
@@ -137,23 +139,35 @@ UI.Content.Types.Memo = class_def
 		{
 			var hr = enew( "div", e );
 			var wr = enew_t( "button", hr, "保存", { onclick: save } );
-			enew( "textarea", e, null, { display: "block", width: "600px", height: "90px" } );
+			var text = enew( "textarea", e, null, { display: "block", width: "600px", height: "90px" } );
 			
 			var self = this;
+			var key = date_format( "{YYYY}{MM}{DD}", self.Node.Date )
 			
-			function save()
+			function load()
 			{
 				if( self.Node.Date )
 				{
-					var key = date_format( "{YYYY}{MM}{DD}", self.Node.Date )
-					self.MD.MemoRecord.Write( key );
+					var item = self.MD.MemoRecord.Read( key, { Text: "Iidasen" } );
+					if( item != FS.Err )
+					{
+						text.value = item.Text;
+					}
 				}
 			}
 			
-			save();
+			function save()
+			{
+				if( self.Node.Date )  self.MD.MemoRecord.Write( key, text.value );
+			}
+			
+			load();
 		};
 	}
 );
+
+
+
 
 UI.Content.Types.Eval = class_def
 (
@@ -165,7 +179,7 @@ UI.Content.Types.Eval = class_def
 			var w = "600px";
 			var hrz = enew( "div", e );
 			var ex = enew_t( "button", hrz, "実行" );
-			var code = enew( "textarea", hrz, {  }, { display: "block", width: w, height: "100px" } );
+			var code = enew( "textarea", hrz, {  }, { display: "block", width: w, height: "150px" } );
 			var output = enew( "textarea", hrz, {  }, { display: "block", width: w, height: "70px" } );
 			var input = enew( "textarea", hrz, {  }, { display: "block", width: w, height: "70px" } );
 			
