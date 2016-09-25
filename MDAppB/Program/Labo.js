@@ -137,9 +137,12 @@ UI.Content.Types.Memo = class_def
 	{
 		this.BuildBottom = function( e )
 		{
+			var rec = this.MD.MemoRecord;
+			
 			var hr = enew( "div", e );
 			var wr = enew_t( "button", hr, "保存", { onclick: save } );
 			var text = enew( "textarea", e, null, { display: "block", width: "600px", height: "90px" } );
+			var output = enew( "textarea", e, null, { display: "block", width: "600px", height: "90px" } );
 			
 			var self = this;
 			var key = date_format( "{YYYY}{MM}{DD}", self.Node.Date )
@@ -148,17 +151,23 @@ UI.Content.Types.Memo = class_def
 			{
 				if( self.Node.Date )
 				{
-					var item = self.MD.MemoRecord.Read( key, { Text: "Iidasen" } );
-					if( item != FS.Err )
-					{
-						text.value = item.Text;
-					}
+					var d = date_format( "{Y}年{M}月{D}日 {B}曜日", self.Node.Date );
+					var item = rec.Get( key, { Text: d + "のできごと:\r\n" } );
+					
+					text.value = item == null ? "[[ null ]]" : item.Text ;
 				}
 			}
 			
 			function save()
 			{
-				if( self.Node.Date )  self.MD.MemoRecord.Write( key, text.value );
+				if( self.Node.Date )
+				{
+					rec.Set( key, { Text: text.value } );
+					rec.Save();
+					
+					var fvalue = rec.GetFileValue( key );
+					output.value = json_value( fvalue );
+				}
 			}
 			
 			load();

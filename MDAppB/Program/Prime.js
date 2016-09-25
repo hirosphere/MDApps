@@ -171,6 +171,7 @@ var date_fns =
 	
 	"YYYY": function( date )  { return str_right( 4, "000" + date.getFullYear() ); },
 	"YY"  : function( date )  { return str_right( 2, "0" + date.getFullYear() ); },
+	"Y"  : function( date )  { return "" + date.getFullYear(); },
 	"MM"  : function( date )  { return str_right( 2, "0" + ( date.getMonth() + 1 ) ); },
 	"M"   : function( date )  { return "" + ( date.getMonth() + 1 ); },
 	"DD"  : function( date )  { return str_right( 2, "0" + date.getDate() ); },

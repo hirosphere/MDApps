@@ -12,6 +12,8 @@ var Record = class_def
 		{
 			Base.Initiate.call( this );
 			this.Folder = folder;
+			
+			this.Cache = {};
 		};
 		
 		this.NewKey = function( base )
@@ -19,63 +21,72 @@ var Record = class_def
 			return base + ".A" + next_id ++;
 		};
 		
-		this.Read = function( key, initv )
+		this.Get = function( key, initv )
 		{
-			var record = this.Load( key );
-			if( record != Err )
+			var value = this.GetFileValue( key );
+			
+			if( value == null )  return null;
+			
+			if( value[ key ] === undefined )
 			{
-				var item = record[ key ];
-				return item === undefined ? initv : item;
+				value[ key ] = initv;
 			}
-			return Err;
+			
+			return value[ key ];
 		};
 		
-		this.Write = function( key, data )
-		{
-			var record = this.Load( key );
-			if( record != Err )
-			{
-				record[ key ] = key;
-				return this.Save( key, record );
-			}
-			return false;
-		};
-		
-		this.Load = function( key )
+		this.Set = function( key, data )
 		{
 			var path = this.MakeFilePath( key );
-			if( path != null )
-			{
-				var file = this.Folder.MakeFile( path );
-				if( file != null )
-				{
-					var json = file.Read( Err )
-					if( json != Err )
-					{
-						var record = value_json( json, Err );
-						if( record != Err )
-						{
-							return record || {};
-						}
-					}
-				}
-			}
-			return Err;
+			var cache = this.MakeCache( path );
+			
+			if( cache == null )  return false;
+			
+			cache.Value[ key ] = data;
+			cache.Modified = true;
+			
+			return true;
 		};
 		
-		this.Save = function( key, record )
+		this.GetFileValue = function( key )
 		{
 			var path = this.MakeFilePath( key );
-			if( path != null )
+			var cache = this.MakeCache( path );
+			return cache && cache.Value || null;
+		};
+		
+		this.MakeCache = function( path )
+		{
+			var cache = this.Cache[ path ];
+			
+			if( cache == undefined )
 			{
-				var file = this.Folder.MakeFile( path );
-				if( file != null )
+				cache = this.Cache[ path ] =
 				{
-					var json = json_value( record );
-					return file.Write( json );
+					Value : this.Folder.MakeFile( path ).LoadValue() || {},
+					Midified : false
+				};
+			}
+			
+			return cache;
+		};
+		
+		this.Save = function()
+		{
+			for( var path in this.Cache )
+			{
+				var cache = this.Cache[ path ];
+				
+				if( cache.Modified )
+				{
+					this.Folder.MakeFile( path ).SaveValue( cache.Value );
 				}
 			}
-			return false;
+		};
+		
+		this.Flush = function()
+		{
+			for( var path in this.Cache )  delete this.Cache[ path ];
 		};
 		
 		this.MakeFilePath = function( key )
@@ -177,28 +188,43 @@ FS.File = class_def
 			Base.Initiate.call( this );
 		};
 		
-		this.Read = function( failv )
+		this.LoadValue = function( failv )
+		{
+			if( this.MakeReal() )
+			{
+				return this.Tree.Phy.LoadValue( this.GetFSPath(), true, failv );
+			}
+			
+			return failv;
+		};
+		
+		this.SaveValue = function( value )
+		{
+			if( this.MakeReal() )
+			{
+				return this.Tree.Phy.SaveValue( this.GetFSPath(), value, true );
+			}
+			
+			return false;
+		};
+		
+		this.Load = function( failv )
 		{
 			if( this.MakeReal() )
 			{
 				return this.Tree.Phy.Load( this.GetFSPath(), true, failv );
 			}
-			else
-			{
-				return failv;
-			}
+			
+			return failv;
 		};
 		
-		this.Write = function( value )
+		this.Save = function( text )
 		{
 			if( this.MakeReal() )
 			{
-				return this.Tree.Phy.Save( this.GetFSPath(), value, true );
+				return this.Tree.Phy.Save( this.GetFSPath(), text, true );
 			}
-			else
-			{
-				log( "File.Write " );
-			}
+			
 			return false;
 		};
 		
@@ -239,8 +265,14 @@ FS.Phy.Base = class_def
 		
 		this.LoadValue = function( path, create, failv )
 		{
-			var json = this.Load( path, create );
-			return json === undefined ? failv : value_json( json );
+			var json = this.Load( path, create, failv );
+			return json === failv ? failv : value_json( json );
+		};
+		
+		this.SaveValue = function( path, value, create )
+		{
+			var json = json_value( value );
+			return this.Save( path, json, create );
 		};
 	}
 );

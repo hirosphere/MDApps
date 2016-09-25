@@ -8,6 +8,11 @@ html, input, textarea, button
 	color: #333;
 }
 
+h2 { margin: 0; }
+
+p { margin: 0; }
+
+input, select { font-size: 18px; }
 
 .Navi
 {
@@ -32,7 +37,7 @@ html, input, textarea, button
 }
 
 .Navi_Path_Tab     { display: none;  padding: 0px 5px; }
-.Navi_Path_Tab:hover  { font-weight: bold; }
+.Navi_Path_Tab:hover  { background: #0e0e0e; }
 .Navi_Path_Tab_Vis { display: inline }
 .Navi_Path_Tab_Sel,
 .Navi_Path_Tab_Sel:hover { color: #fe6; }
@@ -50,7 +55,7 @@ html, input, textarea, button
 .Navi_Coll_Tab { margin-right: 1px; padding: 8px 11px; }
 .Navi_Coll_Tab:hover { background: #e8e4d0; }
 .Navi_Coll_Tab_Sel,
-.Navi_Coll_Tab_Sel:hover { background: #69d; background: #aa8; background: #181818; color: #fff; }
+.Navi_Coll_Tab_Sel:hover { background: #69d; background: #aa8; background: #0e0e0e; color: #fff; }
 
 
 .Navi_Enter
@@ -77,4 +82,13 @@ html, input, textarea, button
 }
 
 .Content h2  { margin: 0;  padding: 2px 4px;  }
+
+#Log
+{
+	background: #665;
+	padding: 18px;
+	font-family: "MS Gothic";
+	font-size: 14px;
+	color: #eee
+}
 
