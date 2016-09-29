@@ -71,8 +71,10 @@ function str_right( ct, str )
 }
 
 
-function str_format( format, fs )
+function str_format( format, a, b, c, d, e, f, g )
 {
+	var args = arguments;
+	
 	return format.replace
 	(
 		/(`.)|{((`.|[^}])*)}/g, 
@@ -80,7 +82,13 @@ function str_format( format, fs )
 		{
 			if( a ) return a.replace( "`", "" );
 			var name = b.replace( /`/g, "" );
-			return fs[ name ];
+			
+			for( var i = 1; i < args.length; i ++ )
+			{
+				var fs = args[ i ];
+				if( fs && fs[ name ] !== undefined )  return fs[ name ];
+			}
+			return "";
 		}
 	 );
 }
@@ -257,6 +265,7 @@ function json_value_( value, indent_ch, indent )
 	if( value === null )  return "null";
 	if( value.constructor == String )  return json_str( value );
 	if( value.constructor == Number )  return value.toString();
+	if( value.constructor == Boolean )  return value.toString();
 	if( value.constructor == Array )  return json_array( value, indent_ch, indent );
 	if( value.constructor == Object )  return json_obj( value, indent_ch, indent );
 }

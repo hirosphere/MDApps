@@ -16,70 +16,18 @@ var Record = class_def
 			this.Cache = {};
 		};
 		
-		this.NewKey = function( base )
-		{
-			return base + ".A" + next_id ++;
-		};
-		
-		this.Get = function( key, initv )
-		{
-			var value = this.GetFileValue( key );
-			
-			if( value == null )  return null;
-			
-			if( value[ key ] === undefined )
-			{
-				value[ key ] = initv;
-			}
-			
-			return value[ key ];
-		};
-		
-		this.Set = function( key, data )
-		{
-			var path = this.MakeFilePath( key );
-			var cache = this.MakeCache( path );
-			
-			if( cache == null )  return false;
-			
-			cache.Value[ key ] = data;
-			cache.Modified = true;
-			
-			return true;
-		};
-		
-		this.GetFileValue = function( key )
-		{
-			var path = this.MakeFilePath( key );
-			var cache = this.MakeCache( path );
-			return cache && cache.Value || null;
-		};
-		
-		this.MakeCache = function( path )
-		{
-			var cache = this.Cache[ path ];
-			
-			if( cache == undefined )
-			{
-				cache = this.Cache[ path ] =
-				{
-					Value : this.Folder.MakeFile( path ).LoadValue() || {},
-					Midified : false
-				};
-			}
-			
-			return cache;
-		};
+		// 全体操作 //
 		
 		this.Save = function()
 		{
-			for( var path in this.Cache )
+			for( var fkey in this.Cache )
 			{
-				var cache = this.Cache[ path ];
+				var cache = this.Cache[ fkey ];
 				
 				if( cache.Modified )
 				{
-					this.Folder.MakeFile( path ).SaveValue( cache.Value );
+					this.Folder.MakeFile( cache.FilePath ).SaveValue( cache.Value );
+					cache.Modified = false;
 				}
 			}
 		};
@@ -89,9 +37,111 @@ var Record = class_def
 			for( var path in this.Cache )  delete this.Cache[ path ];
 		};
 		
-		this.MakeFilePath = function( key )
+		
+		// 不定数データ //
+		
+		this.Add = function( fkey, data )
 		{
-			return key + ".json";
+			var key = this.MakeKey( fkey, this.GetNextSerial( fkey ) );
+			
+			this.Set( key, data );
+			
+			return key;
+		};
+		
+		this.GetNextSerial = function( fkey )
+		{
+			var cache = this.MakeCache( fkey );
+			return cache && ( cache.Value.NextSerial ++ ) || null;
+		};
+		
+		
+		// キー決定データ //
+		
+		this.Get = function( key, initv )
+		{
+			var value = this.GetFileValue( key );
+			
+			if( value == null )  return null;
+			
+			if( value.Content[ key ] === undefined )
+			{
+				value.Content[ key ] = initv;
+			}
+			
+			return value.Content[ key ];
+		};
+		
+		this.Set = function( key, data )
+		{
+			var fkey = this.MakeFileKey( key );
+			var cache = this.MakeCache( fkey );
+			
+			if( cache == null )  return false;
+			
+			cache.Value.Content[ key ] = data;
+			cache.Modified = true;
+			
+			return true;
+		};
+		
+		
+		// ファイルヴァリュー //
+		
+		this.GetFileValue = function( key )
+		{
+			var fkey = this.MakeFileKey( key );
+			var cache = this.MakeCache( fkey );
+			return cache && cache.Value || null;
+		};
+		
+		this.MakeCache = function( fkey )
+		{
+			if( fkey == null )  return null;
+			
+			var cache = this.Cache[ fkey ];
+			var q = 1;
+			
+			if( cache == undefined )
+			{
+				var path = this.MakeFilePath( fkey );
+				
+				cache = this.Cache[ fkey ] =
+				{
+					FilePath: path,
+					Modified : false,
+					Value : this.Folder.MakeFile( path ).LoadValue()
+				};
+				
+				if( cache.Value == null )
+				{
+					cache.Value =
+					{
+						Q1: path,
+						NextSerial: 1,
+						Content: {}
+					};
+				}
+			}
+			
+			return cache;
+		};
+		
+		// キー //
+		
+		this.MakeKey = function( filekey, serial )
+		{
+			return filekey + "-" + serial;
+		};
+		
+		this.MakeFileKey = function( key )
+		{
+			return "Record";
+		};
+		
+		this.MakeFilePath = function( fkey )
+		{
+			return fkey + ".json";
 		};
 	}
 );
@@ -112,7 +162,7 @@ var FS = class_def
 		this.Initiate = function( root_dir, demo_mode )
 		{
 			Base.Initiate.call( this );
-			this.RootDir = root_dir.replace( /\\/g, "/" );
+			this.RootDir = root_dir;
 			this.Phy = demo_mode ? new FS.Phy.HTTP() : new FS.Phy.WSH();
 			
 			this.SetRoot( new FS.Folder( "" ) );
@@ -230,7 +280,6 @@ FS.File = class_def
 		
 		this.MakeReal = function()
 		{
-			log( "FS.File.MakeReal " + this.GetFSPath() + " Com: " + this.Com.GetFSPath() );
 			return this.Com && this.Com.MakeReal();
 		};
 		
@@ -251,15 +300,21 @@ FS.Phy.Base = class_def
 	null,
 	function()
 	{
-		this.Initiate = function()
+		
+		this.FolderExists = function( path )
+		{
+			return true;
+		};
+		
+		this.CreateFolder = function( path )
+		{
+			return true;
+		};
+		
+		this.MakeFile = function( path )
 		{
 		};
 		
-		//    //
-		
-		this.FolderExists = function( path ) { return true; }
-		this.CreateFolder = function( path ) { return true; }
-		this.MakeFile = function( path ) {};
 		
 		//    //
 		
@@ -273,6 +328,13 @@ FS.Phy.Base = class_def
 		{
 			var json = json_value( value );
 			return this.Save( path, json, create );
+		};
+		
+		
+		//    //
+		
+		this.LoadReals = function( path_list )
+		{
 		};
 	}
 );
@@ -296,14 +358,20 @@ FS.Phy.WSH = class_def
 		
 		this.FolderExists = function( path )
 		{
-			log( [ "FS.Phy.WSH.FolderExists  " + path, FS.FolderExists( path ) ] );
+			path = path.replace( /\//g, "\\" );
+			
+			// log( [ "FS.Phy.WSH.FolderExists  " + path, FS.FolderExists( path ) ] );
 			return FS.FolderExists( path );
 		}
 		
 		this.CreateFolder = function( path )
 		{
+			path = path.replace( /\//g, "\\" );
+			
 			var item = FS.CreateFolder( path );
+			
 			log( [ "FS.Phy.WSH.CreateFolder " + path, item ] );
+			
 			return null != item;
 		};
 		
@@ -311,17 +379,23 @@ FS.Phy.WSH = class_def
 		
 		this.Load = function( path, create, failv )
 		{
+			log( "FS.Phy.WSH.Load : " + path );
+			
+			path = path.replace( /\//g, "\\" );
+			
 			var text = "";
+			
 			try
 			{
-				log( "FS.Phy.WSH.Load try " + path );
 				var stream = FS.OpenTextFile( path, 1, create, -1 );
 				return text = stream.AtEndOfLine ? "" : stream.ReadAll();
 			}
+			
 			catch( exc )
 			{
 				return failv;
 			}
+			
 			finally
 			{
 				stream && stream.Close();
@@ -330,20 +404,26 @@ FS.Phy.WSH = class_def
 		
 		this.Save = function( path, text, create )
 		{
-			log( [ "Phy.Save", path, text ] )
+			log( "FS.Phy.WSH.Save : " + path );
+			
+			path = path.replace( /\//g, "\\" );
+			
 			try
 			{
 				var stream = FS.OpenTextFile( path, 2, create, -1 );
 				stream.Write( text );
 			}
+			
 			catch( exc )
 			{
 				return false;
 			}
+			
 			finally
 			{
 				stream && stream.Close();
 			}
+			
 			return true;
 		};
 	}
@@ -353,8 +433,45 @@ FS.Phy.WSH = class_def
 FS.Phy.HTTP = class_def
 (
 	FS.Phy.Base,
-	function()
+	function( Base )
 	{
+		this.Initiate = function()
+		{
+			Base.Initiate.call( this );
+			
+			this.Cache = {};
+		};
+		
+		//  //
+		
+		
+		this.LoadReals = function( path_list )
+		{
+			for( var i in path_list )
+			{
+				var path = path_list[ i ];
+				
+				this.Cache[ path ] = load( path );
+			}
+		};
+		
+		//  //
+		
+		
+		this.Load = function( path, create, failv )
+		{
+			return this.Cache[ path ] || failv;
+		};
+		
+		
+		this.Save = function( path, text, create )
+		{
+			this.Cache[ path ] = text;
+			return true;
+		};
+		
+		
+		//   //
 		
 		function new_req()
 		{
@@ -363,28 +480,14 @@ FS.Phy.HTTP = class_def
 			return null;
 		}
 		
-		
 		function load( path, failv )
 		{
 			var req = new_req();
-			path = path.replace( /\\/, "/" );
 			req.open( "get", path, false );
 			req.send( null );
 
 			return req.status == 200 ? req.responseText : failv;
 		};
 		
-		
-		this.Load = function( path, create, failv )
-		{
-			return load( path, failv );
-		};
-		
-		
-		this.Save = function( path, text, create )
-		{
-			
-			return true;
-		};
 	}
 );

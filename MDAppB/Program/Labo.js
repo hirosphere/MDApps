@@ -7,9 +7,18 @@ Labo.MemoRecord = class_def
 	Record,
 	function( Base )
 	{
-		this.MakeFilePath = function( key )
+		this.MakeFileKey = function( key )
 		{
-			var m = key.match( /(\d{4})(\d{2})(\d{2})/ );
+			var m = key && key.match( /(\d{4})(\d{2})(\d{2})/ );
+			
+			log( "Labo.MemoRecored.MakeFileKey " + ( m && sf( "{1}{2}", m ) ) );
+			
+			return m && sf( "{1}{2}", m ) || null;
+		};
+		
+		this.MakeFilePath = function( fkey )
+		{
+			var m = fkey && fkey.match( /(\d{4})(\d{2})/ );
 			
 			return m && sf( "{1}/{1}_{2}.json", m ) || null;
 		};

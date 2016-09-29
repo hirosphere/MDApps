@@ -12,6 +12,7 @@ h2 { margin: 0; }
 
 p { margin: 0; }
 
+input, textarea { margin: 4px; border: 1px solid #998; }
 input, select { font-size: 18px; }
 
 .Navi
