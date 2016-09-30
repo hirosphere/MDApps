@@ -15,18 +15,20 @@ UI.App = class_def
 			var page_tree = new Tree();
 			
 			page_tree.Types.Memo = Labo.MemoNode;
+			page_tree.Types.Eki = Labo.EkiNode;
 			
 			page_tree.SetSource( md.ページ構成 );
 			
 			var navi = new UI.NaviModel( page_tree );
 			new UI.Navi( this.e, navi );
-			new UI.Contents( this.e, navi, md );
+			new UI.Contents( this.e, page_tree, navi, md );
 			
 			//navi.Select( page_tree.Root );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp", 1 ) );
-			navi.Select( page_tree.MakeNodeByPath( "MDApp/資材/受入れ", 1 ) );
+			//navi.Select( page_tree.MakeNodeByPath( "MDApp/資材/受入れ", 1 ) );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Eval", 1 ) );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Memo/2016/11/15", 2 ) );
+			navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Eki", 0 ) );
 		};
 		
 		this.Terminate = function()
@@ -187,7 +189,7 @@ UI.Navi.Coll = class_def
 			{
 				node = new_node;
 				
-				e_plain( e, node == null ? ".." : node.GetLabel() );
+				e_plain( e, node == null ? ".." : node.GetLabel( "'" ) );
 				e_class_set( e, "Navi_Coll_Tab_Sel", node == navi.Current );
 				e.style.display = node ? "inline" : "none";
 				//s.style.display = ( node && node.Next() ) ? "inline" : "none";
@@ -208,10 +210,36 @@ UI.Navi.Enter = class_def
 			this.e = enew_c( "div", com, "Navi_Enter" );
 			this.p = enew_c( "div", this.e, "_Path" );
 			this.fs = enew_c( "div", this.e, "_Fields" );
+			this.Tabs = [];
 			
-			if( node )  for( var n in node.MakeFields() )
+			this.Node = node;
+			this.Navi = navi;
+			
+			this.Node.Tree.AddView( this, "Tree_" );
+			
+			this.Update();
+		};
+		
+		this.Tree_FieldChanged = function( node )
+		{
+			if( node == this.Node )  this.Update();
+		};
+		
+		this.Update = function()
+		{
+			if( this.Node == null )  return;
+			
+			var fs = this.Node.MakeFields();
+			var ct = Math.max( fs.length, this.Tabs.length );
+			
+			for( var n = 0; n < ct; n ++ )
 			{
-				new Tab( this.fs, "Navi_Ent_Item", node.Fields[ n ], navi );
+				var tab = this.Tabs[ n ] = this.Tabs[ n ] ||
+				(
+					new Tab( this.fs, "Navi_Ent_Item", fs[ n ], this.Navi )
+				);
+				
+				tab.SetVisibility( n < fs.length );
 			}
 		};
 		
@@ -223,6 +251,11 @@ UI.Navi.Enter = class_def
 			{
 				node && navi.Select( node );
 			};
+			
+			this.SetVisibility = function( value )
+			{
+				e.style.display = ( value ? "block" : "none" );
+			};
 		}
 	}
 );
@@ -233,7 +266,7 @@ UI.Contents = class_def
 	null,
 	function()
 	{
-		this.Initiate = function( com, navi, md )
+		this.Initiate = function( com, page_tree, navi, md )
 		{
 			this.Navi = navi;
 			this.MD = md;
@@ -243,6 +276,7 @@ UI.Contents = class_def
 			this.e = enew_c( "div", com, "Contents" );
 			
 			navi.AddView( this, "Navi_" );
+			
 		};
 		
 		this.Navi_Changed = function()

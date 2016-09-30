@@ -31,18 +31,18 @@ input, select { font-size: 18px; }
 {
 	margin-bottom: 1px;
 	background: #8b5;
-	height: 23px;
-	line-height: 23px;
+	height: 25px;
+	line-height: 25px;
 	font-size: 18px;
 	color: #fff;
 }
 
-.Navi_Path_Tab     { display: none;  padding: 0px 5px; }
+.Navi_Path_Tab     { display: none;  padding: 0px 3px; }
 .Navi_Path_Tab:hover  { background: #0e0e0e; }
 .Navi_Path_Tab_Vis { display: inline }
 .Navi_Path_Tab_Sel,
 .Navi_Path_Tab_Sel:hover { color: #fe6; }
-.Navi_Path_Tab_Sep { margin: 0 0px; font-size: 12px; font-family: monospace; }
+.Navi_Path_Tab_Sep { margin: 0 3px; font-size: 12px; font-family: monospace; }
 
 
 .Navi_Coll

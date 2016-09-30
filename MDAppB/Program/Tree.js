@@ -81,7 +81,6 @@ var Node = class_def
 	{
 		this.Type = "";
 		this.Name = "";
-		this.Label = "";
 		
 		this.Initiate = function( src, tree )
 		{
@@ -91,7 +90,6 @@ var Node = class_def
 			this.Com = null;
 			this.Src = src;
 			this.Type = this.GetAttr( "Type", this.Type );
-			this.Label = this.GetAttr( "Label", this.GetAttr( "Name", this.Label ) );
 			this.Order = 0;
 			this.Fields = [];
 			this.Names = {};
@@ -107,7 +105,7 @@ var Node = class_def
 		
 		this.GetLabel = function( failv )
 		{
-			return this.Label || this.Name || failv;
+			return this.GetAttr( "Label", this.GetAttr( "Name", failv ) );
 		};
 		
 		this.GetTitle = function( failv )
@@ -243,7 +241,7 @@ var Node = class_def
 		
 		this.toString = function( i )
 		{
-			return this.Name;
+			return this.GetLabel( this.Type );
 		};
 	}
 );

@@ -55,6 +55,11 @@
 					"Name": "Memo"
 				},
 				{
+					"Type": "Eki",
+					"Name": "Eki",
+					"Title": "駅"
+				},
+				{
 					"Type": "FS_Labo",
 					"Name": "FS"
 				}
