@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<HTA:APPLICATION
+	WINDOWSTATE = "maximize"
+/>
+
+<title>MDApp</title>
+
+<link rel="stylesheet" href="./MDAppB/Style.css" />
+
+</head>
+
+<body>
+
+<div id="Main"></div>
+
+<p id="Log"></p>
+
+<script>
+
+var MD_Data_Dir = "Data_u16\\";
+var MD_HTML_Demo = false;
+
+</script>
+
+<script src="./MDAppB/Prime.js"></script>
+<script src="./MDAppB/Tree.js"></script>
+<script src="./MDAppB/FS.js"></script>
+<script src="./MDAppB/MD.js"></script>
+<script src="./MDAppB/UI.js"></script>
+<script src="./MDAppB/Content/資材定義.js"></script>
+<script src="./MDAppB/Content/資材受入れ.js"></script>
+<script src="./MDAppB/Content/資材使用.js"></script>
+<script src="./MDAppB/Content/資材在庫.js"></script>
+<script src="./MDAppB/Labo.js"></script>
+<script src="./MDAppB/Labo/Eki.js"></script>
+
+<script>
+
+new function()
+{
+	var md_app;
+	
+	window.onload = function()
+	{
+		md_app = new UI.App( e_id( "Main" ), "Data_u16", false );
+	};
+
+	window.onbeforeunload = function()
+	{
+		md_app && md_app.Terminate();
+	};
+
+};
+
+</script>
+
+</script>
+
+
+
+</body>
+
+</html>
+
+

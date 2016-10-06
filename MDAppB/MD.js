@@ -8,35 +8,39 @@ MD.App = class_def
 		this.Initiate = function( data_dir, demo_mode )
 		{
 			this.FS = new FS( data_dir, demo_mode );
-			this.MakeDemo();
+			demo_mode && this.MakeDemo();
+			
 			var root = this.FS.Root;
 			
-			this.ページ構成 = this.FS.Root.MakeFile( "ページ構成.json", true ).LoadValue();
+			this.ページ構成 = root.MakeFile( "アプリ定義/ページ構成.json", true ).LoadValue();
+			
+			
+			this.Files = {};
+			
+			// 定義データ //
+			
+			this.Files.資材定義 = root.MakeFile( "定義/資材定義.json", true );
+			
+			
+			
+			
+			// 記録 //
+			
+			this.資材TL = new MD.資材TL( root.MakeFolder( "資材" ), "TL" );
 			
 			this.MemoRecord = new Labo.MemoRecord( this.FS.Root.MakeFolder( "Memo" ) );
-			
-			
-			this.資材定義作成();
-			this.資材TL = new MD.資材TL( root.MakeFolder( "資材" ), "In" );
 		};
 		
 		this.MakeDemo = function()
 		{
-			var root = this.FS.RootDir;
-			
+			var root = this.FS.Root.GetFSPath() + "/";
 			var list =
 			[
-				root + "/ページ構成.json"
+				root + "定義/資材定義.json",
+				root + "アプリ定義/ページ構成.json"
 			];
 			
 			this.FS.Phy.LoadReals( list );
-		};
-		
-		this.資材定義作成 = function()
-		{
-			this.資材定義 =
-			{
-			};
 		};
 	}
 );

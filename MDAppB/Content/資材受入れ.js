@@ -5,11 +5,11 @@
 	{
 		this.BuildTop = function()
 		{
-			var hr = enew( "div", this.e );
+			var hr = enew( "div", this.e, null, { marginBottom: "1em" } );
 			var date = enew( "input", hr, { value: date_format( "{Y}/{M}/{D} {hh}:{mm}" ) } );
 			var new_key = enew( "input", hr, {} );
 			
-			var table = enew( "table", this.e );
+			var table = enew_c( "table", this.e, "InpField" );
 			var tbody = enew( "tbody", table );
 			var tr1 = enew( "tr", tbody );
 			var tr2 = enew( "tr", tbody );
@@ -29,22 +29,22 @@
 			inps.lot = enew( "input", enew( "td", tr2 ), null, { width: "7em" } );
 			
 			enew_t( "td", tr1, "業者名" );
-			inps.gyo = enew( "input", enew( "td", tr2 ), null, { width: "6em" } );
+			inps.gyo = enew( "input", enew( "td", tr2 ), null, { width: "10em" } );
 			
 			enew_t( "td", tr1, "製品名" );
-			inps.nam = enew( "input", enew( "td", tr2 ), null, { width: "12em" } );
+			inps.nam = enew( "input", enew( "td", tr2 ), null, { width: "18em" } );
 			
 			enew_t( "td", tr1, "重量" );
 			inps.juu = enew( "input", enew( "td", tr2 ), null, { width: "4em" } );
 			
 			enew_t( "td", tr1, "状態" );
-			sels.jou = enew( "select", enew( "td", tr2 ), null, { width: "2em" } );
+			sels.jou = enew( "select", enew( "td", tr2 ), null, { width: "3em" } );
 			
 			enew_t( "td", tr1, "対応" );
-			sels.tai = enew( "select", enew( "td", tr2 ), null, { width: "2em" } );
+			sels.tai = enew( "select", enew( "td", tr2 ), null, { width: "3em" } );
 			
 			enew_t( "td", tr1, "記入者" );
-			inps.kin = enew( "input", enew( "td", tr2 ), null, { width: "3em" } );
+			inps.kin = enew( "input", enew( "td", tr2 ), null, { width: "4em" } );
 			
 			var hr = enew( "div", this.e );
 			var ent = enew_t( "button", hr, "確定" );
