@@ -12,14 +12,14 @@ MD.App = class_def
 			
 			var root = this.FS.Root;
 			
-			this.ページ構成 = root.MakeFile( "アプリ定義/ページ構成.json", true ).LoadValue();
+			this.ページ構成 = root.MakeFile( "App/Book.json", true ).LoadValue();
 			
 			
 			this.Files = {};
 			
 			// 定義データ //
 			
-			this.Files.資材定義 = root.MakeFile( "定義/資材定義.json", true );
+			this.Files.資材定義 = root.MakeFile( "Defs/Shizai.json", true );
 			
 			
 			
@@ -36,8 +36,8 @@ MD.App = class_def
 			var root = this.FS.Root.GetFSPath() + "/";
 			var list =
 			[
-				root + "定義/資材定義.json",
-				root + "アプリ定義/ページ構成.json"
+				root + "Defs/Shizai.json",
+				root + "App/Book.json"
 			];
 			
 			this.FS.Phy.LoadReals( list );
@@ -139,4 +139,30 @@ MD.資材庫 = class_def
 		};
 	}
 );
+
+function tsv_rfs( rfs )
+{
+	var rt = "";
+	for( var key in rfs )
+	{
+		rt += key + "\t";
+		rt += rfs[ key ].join( "\t" ) + "\r\n";
+	}
+	return rt;
+};
+
+function rfs_tsv( tsv )
+{
+	var rt = {};
+	
+	for( var lines = tsv.split( /\r?\n/g ), i = 0; i < lines.length; i ++ )
+	{
+		var line = lines[ i ].split( "\t" );
+		if( line.length == 0 )  continue;
+		
+		var key = line.shift();
+		rt[ key ] = line;
+	}
+	return rt;
+}
 

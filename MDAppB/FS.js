@@ -236,13 +236,24 @@ FS.File = class_def
 		this.Initiate = function()
 		{
 			Base.Initiate.call( this );
+			
+			this.Value = undefined;
+		};
+		
+		this.GetValue = function( failv )
+		{
+			if( this.Value !== undefined )  return this.Value;
+			
+			this.LoadValue( failv );
+			return this.Value;
 		};
 		
 		this.LoadValue = function( failv )
 		{
 			if( this.MakeReal() )
 			{
-				return this.Tree.Phy.LoadValue( this.GetFSPath(), true, failv );
+				this.Value = this.Tree.Phy.LoadValue( this.GetFSPath(), true, failv );
+				return this.Value;
 			}
 			
 			return failv;
@@ -250,6 +261,8 @@ FS.File = class_def
 		
 		this.SaveValue = function( value )
 		{
+			this.Value = value;
+			
 			if( this.MakeReal() )
 			{
 				return this.Tree.Phy.SaveValue( this.GetFSPath(), value, true );

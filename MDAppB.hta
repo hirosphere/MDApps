@@ -20,22 +20,15 @@
 
 <p id="Log"></p>
 
-<script>
-
-var MD_Data_Dir = "Data_u16\\";
-var MD_HTML_Demo = false;
-
-</script>
-
 <script src="./MDAppB/Prime.js"></script>
 <script src="./MDAppB/Tree.js"></script>
 <script src="./MDAppB/FS.js"></script>
 <script src="./MDAppB/MD.js"></script>
 <script src="./MDAppB/UI.js"></script>
-<script src="./MDAppB/Content/資材定義.js"></script>
-<script src="./MDAppB/Content/資材受入れ.js"></script>
-<script src="./MDAppB/Content/資材使用.js"></script>
-<script src="./MDAppB/Content/資材在庫.js"></script>
+<script src="./MDAppB/Content/Shizai_Teigi.js"></script>
+<script src="./MDAppB/Content/Shizai_Ukeire.js"></script>
+<script src="./MDAppB/Content/Shizai_Shiyou.js"></script>
+<script src="./MDAppB/Content/Shizai_Zaiko.js"></script>
 <script src="./MDAppB/Labo.js"></script>
 <script src="./MDAppB/Labo/Eki.js"></script>
 
@@ -47,7 +40,7 @@ new function()
 	
 	window.onload = function()
 	{
-		md_app = new UI.App( e_id( "Main" ), "Data_u16", false );
+		md_app = new UI.App( e_id( "Main" ), "Data", false );
 	};
 
 	window.onbeforeunload = function()
