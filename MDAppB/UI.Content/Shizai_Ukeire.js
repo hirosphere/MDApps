@@ -8,12 +8,17 @@
 		this.BuildTop = function()
 		{
 			this.Timeline = this.MD.資材TL;
+			var timeline = this.MD.資材TL;
 			
 			var hr = enew( "div", this.e, null, { marginBottom: "1em" } );
-			var datesel = new UI.Date( hr, new Date() );
+			var contents = new UI.DateContents( this.e, new Date );
 			
-			new UI.資材受入れリスト( this.e, this.Timeline.CreateInpList( datesel.Date ) );
+			contents.CreateContent = function( com, date )
+			{
+				return new UI.資材受入れリスト( com, timeline.CreateInputList( date ) );
+			};
 			
+			contents.Update();
 		};
 	}
 );
@@ -29,18 +34,17 @@ UI.資材受入れリスト = class_def
 			this.List = list;
 			
 			this.e = enew( "div", com );
-			enew_t( "p", this.e, "資材受入れリスト" );
+			//enew_t( "p", this.e, "資材受入れリスト " + list.Date );
 			
 			this.BuildInput();
 			
 			this.jmon = enew( "textarea", this.e, {}, { width: "900px", height: "270px" } );
+			this.jmon.value = str_value( this.List.Rows );
 		};
 		
 		this.BuildInput = function()
 		{
 			var hr = enew( "div", this.e, null, { marginBottom: "1em" } );
-			
-			var new_key = enew( "input", hr, {} );
 			
 			var table = enew_c( "table", this.e, "InpField" );
 			var tbody = enew( "tbody", table );
@@ -112,8 +116,7 @@ UI.資材受入れリスト = class_def
 				var fkey = date_format( "{YYYY}{MM}{DD}", d );
 				//new_key.value = timeline.Add( fkey, row );
 				
-				new_key.value = timeline.Add( d, row );
-				
+				timeline.Add( d, row );
 				timeline.Save();
 				
 				

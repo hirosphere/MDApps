@@ -35,13 +35,60 @@ UI.TableList = class_def
 );
 
 
-UI.Date = class_def
+UI.DateContents = class_def
 (
 	null,
 	function()
 	{
 		this.Initiate = function( com, date )
 		{
+			this.Contents = {};
+			this.Current = null;
+			
+			this.e = enew_c( "div", com, "DateContents" );
+			
+			var hr = enew( "div", this.e );
+			this.DateSel = new UI.Date( hr, date );
+			
+			this.Frame = enew( "div", this.e );
+			
+			this.DateSel.AddView( this, "" );
+		};
+		
+		this.Update = function()
+		{
+			var datekey = df( "{YYYY}/{MM}/{DD}", this.DateSel.Date );
+			
+			if( this.Current )  this.Current.e.style.display = "none";
+			
+			var content = this.Contents[ datekey ];
+			if( ! content )
+			{
+				var date = new Date( datekey );
+				content = this.Contents[ datekey ] = this.CreateContent( this.Frame, date );
+			}
+			
+			this.Current = content;
+			if( this.Current )  this.Current.e.style.display = "block";
+		};
+		
+		this.CreateContent = function( com, date )
+		{
+			return { e: enew_t( "div", com, date ) };
+		};
+	}
+);
+
+
+UI.Date = class_def
+(
+	Model,
+	function( base )
+	{
+		this.Initiate = function( com, date )
+		{
+			base.Initiate.call( this );
+			
 			this.Date = date;
 			
 			this.e = enew_c( "a", com, "DateSel", { href: "javascript: void(0)" } );
@@ -111,6 +158,7 @@ UI.Date = class_def
 			c == "M" && this.Date.setMonth( this.Date.getMonth() + value );
 			c == "Y" && this.Date.setFullYear( this.Date.getFullYear() + value );
 			this.Update();
+			this.Notify( "Update", [] );
 		};
 		
 		this.Update = function()

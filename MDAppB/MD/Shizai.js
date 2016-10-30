@@ -41,9 +41,9 @@ MD.資材TL = class_def
 			return Base.Add.call( this, fkey, data );
 		};
 		
-		this.CreateInpList = function( date )
+		this.CreateInputList = function( date )
 		{
-			return new MD.InpList( this, date );
+			return new MD.InputList( this, date );
 		};
 		
 		this.GetDateRows = function( date )
@@ -75,20 +75,19 @@ MD.資材TL = class_def
 	}
 );
 
-MD.InpList = class_def
+MD.InputList = class_def
 (
 	List,
 	function( base )
 	{
 		this.Initiate = function( record, date )
 		{
-			base.Initiate.call( this, record );
 			this.Date = date;
+			base.Initiate.call( this, record );
 		};
 		
 		this.Update = function()
 		{
-			log( "List.Record " + this.Record );
 			var rows = this.Record.GetDateRows( this.Date );
 			
 			this.Rows = rows;
