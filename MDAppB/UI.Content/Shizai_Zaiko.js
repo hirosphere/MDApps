@@ -18,8 +18,6 @@ UI.Content.Types.資材在庫 = class_def
 		this.BuildTop = function()
 		{
 			var mdef = this.MD.Files.資材定義.LoadValue();
-			var s = str_value( mdef );
-			enew_t( "p", this.e, "資材定義:\r\n" + s );
 		};
 	}
 );

@@ -3,10 +3,43 @@
 	UI.Content,
 	function( Base )
 	{
+		this.BuildTitle = function() {};
+		
 		this.BuildTop = function()
 		{
+			this.Timeline = this.MD.資材TL;
+			
 			var hr = enew( "div", this.e, null, { marginBottom: "1em" } );
-			var date = enew( "input", hr, { value: date_format( "{Y}/{M}/{D} {hh}:{mm}" ) } );
+			var datesel = new UI.Date( hr, new Date() );
+			
+			new UI.資材受入れリスト( this.e, this.Timeline.CreateInpList( datesel.Date ) );
+			
+		};
+	}
+);
+
+
+UI.資材受入れリスト = class_def
+(
+	null,
+	function()
+	{
+		this.Initiate = function( com, list )
+		{
+			this.List = list;
+			
+			this.e = enew( "div", com );
+			enew_t( "p", this.e, "資材受入れリスト" );
+			
+			this.BuildInput();
+			
+			this.jmon = enew( "textarea", this.e, {}, { width: "900px", height: "270px" } );
+		};
+		
+		this.BuildInput = function()
+		{
+			var hr = enew( "div", this.e, null, { marginBottom: "1em" } );
+			
 			var new_key = enew( "input", hr, {} );
 			
 			var table = enew_c( "table", this.e, "InpField" );
@@ -15,6 +48,9 @@
 			var tr2 = enew( "tr", tbody );
 			
 			var inps = {}, sels = {};
+			
+			enew_t( "td", tr1, "時刻" );
+			inps.tim = enew( "input", enew( "td", tr2 ), null, { width: "3em" } );
 			
 			enew_t( "td", tr1, "コード" );
 			inps.mid = enew( "input", enew( "td", tr2 ), null, { width: "4em" } );
@@ -49,21 +85,19 @@
 			var hr = enew( "div", this.e );
 			var ent = enew_t( "button", hr, "確定" );
 			
-			var jmon = enew( "textarea", this.e, {}, { width: "900px", height: "270px" } );
-			
-			var md = this.MD;
-			
-			var i = 0, smp = [ "150021", "10", "17/6/26", "70115A", "みちくさ酵素化学", "VegeFat 7727", "100", "a" ];
+			var i = 0, smp = [ df( "{hh}:{mm}" ), "150002", "12", "2017/7", "607101A", "松尾化学", "スタビローズ700", "300", "h" ];
 			for( var n in inps )  inps[ n ].value = smp[ i ++ ];
+			
+			var self = this;
 			
 			ent.onclick = function()
 			{
-				var d = new Date( date.value );
+				var d = self.List.Date;
 				
-				var sizai =
+				var row =
 				[
 					"受入れ",
-					date_format( "{YYYY}/{MM}/{DD} {hh}:{mm}:{ss}", d ),
+					inps.tim.value,
 					inps.mid.value,
 					inps.juu.value,
 					inps.end.value,
@@ -73,18 +107,47 @@
 					inps.kin.value
 				];
 				
+				var timeline = self.List.Record;
+				
 				var fkey = date_format( "{YYYY}{MM}{DD}", d );
-				new_key.value = md.資材TL.Add( fkey, sizai );
+				//new_key.value = timeline.Add( fkey, row );
 				
-				md.資材TL.Save();
+				new_key.value = timeline.Add( d, row );
 				
-				var cache = md.資材TL.MakeCache( fkey );
-				jmon.value = json_value( cache );
+				timeline.Save();
+				
+				
+				var fkey = timeline.FileKey_Date( d );
+				var cache = timeline.MakeCache( fkey );
+				self.jmon.value = json_value( cache );
+				
 				
 				//for( var n in inps )  inps[ n ].value = "";
 			};
 			
 		};
 		
+		this.Build = function()
+		{
+		
+		};
+		
+		this.Update = function()
+		{
+		
+		};
+		
+		this.BuildItem = function( key )
+		{
+		
+		};
 	}
 );
+
+
+
+
+
+
+
+

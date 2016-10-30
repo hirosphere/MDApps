@@ -26,8 +26,8 @@ UI.App = class_def
 			
 			//navi.Select( page_tree.Root );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp", 1 ) );
-			navi.Select( page_tree.MakeNodeByPath( "MDApp/資材/定義", 1 ) );
-			//navi.Select( page_tree.MakeNodeByPath( "MDApp/資材/受入れ", 1 ) );
+			//navi.Select( page_tree.MakeNodeByPath( "MDApp/資材/定義", 1 ) );
+			navi.Select( page_tree.MakeNodeByPath( "MDApp/資材/受入れ", 1 ) );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Eval", 1 ) );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Memo/2016/11/15", 2 ) );
 			//navi.Select( page_tree.MakeNodeByPath( "MDApp/Labo/Eki", 0 ) );

@@ -195,6 +195,7 @@ var date_fns =
 	"D"   : function( date )  { return "" + date.getDate(); },
 	"B"   : function( date )  { return date_youbi[ date.getDay() ]; },
 	
+	"hms"  : function( date )  { return date_format( "{hh}:{mm}:{ss}", date ); },
 	"hh"  : function( date )  { return str_right( 2, "0" + date.getHours() ); },
 	"mm"  : function( date )  { return str_right( 2, "0" + date.getMinutes() ); },
 	"ss"  : function( date )  { return str_right( 2, "0" + date.getSeconds() ); },
